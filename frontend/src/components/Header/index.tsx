@@ -22,6 +22,8 @@ import { relevantDigits } from 'utils/relevantDigits'
 import Icon from '../../assets/svg/icon-ube.svg'
 import Logo from '../../assets/svg/logo.svg'
 import LogoDark from '../../assets/svg/logo-dark.svg'
+import brokenswapIcon from '../../assets/images/brokenswap-icon.png';
+import brokenswapLogo from '../../assets/images/brokenswap-logo.png';
 import { useDarkModeManager } from '../../state/user/hooks'
 import { YellowCard } from '../Card'
 import Menu from '../Menu'
@@ -382,8 +384,18 @@ export default function Header() {
       <HeaderRow>
         <Title to="/">
           <UbeIcon>
-            <StyledMobileLogo width={'32px'} height={'36px'} src={Icon} alt="Brokenswap" />
-            <StyledDesktopLogo width={'140px'} height={'26px'} src={darkMode ? LogoDark : Logo} alt="Brokenswap" />
+            <StyledMobileLogo
+              width={'32px'}
+              height={'36px'}
+              src={brokenswapIcon}
+              alt="Brokenswap"
+            />
+            <StyledDesktopLogo
+              width={'265px'}
+              height={'50px'}
+              src={brokenswapLogo}
+              alt="Brokenswap"
+            />
           </UbeIcon>
         </Title>
         <HeaderLinks>
