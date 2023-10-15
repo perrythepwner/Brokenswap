@@ -1,0 +1,13 @@
+version: '3.8'
+    
+services:
+  backend:
+    build: ./backend/
+    image: blockchain_${NAME}_backend:latest
+    container_name: blockchain_${NAME}_backend
+    environment:
+      - SHARED_SECRET=${SHARED_SECRET}
+      - FLAG=${FLAG}
+      - PORT=${PORT}
+    ports:
+      - ${PORT}:${PORT}

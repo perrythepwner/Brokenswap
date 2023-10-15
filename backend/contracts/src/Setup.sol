@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.20;
 
 import {Brokenswap} from "./Brokenswap.sol";
 import {FeesPool} from "./FeesPool.sol";
@@ -13,22 +13,31 @@ contract Setup {
     HTBtoken public immutable htb;
 
     constructor(address _player) payable {
-        require(msg.value == 51 ether);
-        htb = new HTBtoken(50e18);
+        require(msg.value == 510 ether);
+
+        // deploying both HTB and WETH token
+        htb = new HTBtoken(500e18);
         weth = new WETH9();
-        // deploy FeesPool
+
+        // deploying FeesPool with dual pair WETH/HTB
         feesPool = new FeesPool(address(weth), address(htb));
-        // wrapping ETH to WETH and sending tokens to pool reserves
-        weth.deposit{value: 50 ether}(); 
+
+        // wrapping ETH to WETH
+        weth.deposit{value: 500 ether}();
+
+        // deploying Brokenswap with 0.5% swap fee 
         TARGET = new Brokenswap(address(weth), address(htb), 5, address(feesPool));
-        weth.transfer(address(TARGET), 50e18);
-        htb.transfer(address(TARGET), 50e18);
-        // airdrop 10 weth to player
-        weth.deposit{value: 1 ether}(); 
-        weth.transfer(_player, 1e18);
+
+        // sending 1:1 tokens to pool reserves
+        weth.transfer(address(TARGET), 500e18);
+        htb.transfer(address(TARGET), 500e18);
+
+        // player starts with 10 WETH
+        weth.deposit{value: 10 ether}(); 
+        weth.transfer(_player, 10e18);
     }
 
     function isSolved() public view returns (bool) {
-        return (weth.balanceOf(msg.sender) > 1e18);
+        return (weth.balanceOf(msg.sender) > 10e18);
     }
 }
