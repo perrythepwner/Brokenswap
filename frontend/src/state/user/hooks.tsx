@@ -63,7 +63,7 @@ export function useIsDarkMode(): boolean {
 
 export function useDarkModeManager(): [boolean, () => void] {
   const dispatch = useDispatch<AppDispatch>()
-  const darkMode = useIsDarkMode()
+  const darkMode = true // should be useIsDarkMode() but in ctf only dark mode allowed
   const { updateTheme } = useCelo()
 
   useEffect(() => {

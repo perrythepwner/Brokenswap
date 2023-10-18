@@ -48,6 +48,8 @@ import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import AppBody from '../AppBody'
 import { ClickableText } from '../Pool/styleds'
 
+import Web3 from 'web3'
+
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
 
@@ -287,15 +289,23 @@ export default function Swap() {
 
   const { isEstimate, makeLabel } = describeTrade(trade)
   const actionLabel = makeLabel(independentField !== Field.INPUT)
+  
+  // const web3 = new Web3(window.ethereum)
+  // const contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS)
+
+  const sendSwapTx = async () => {
+    const inputElement = document.getElementById('swap-currency-input') as HTMLInputElement
+    const outputElement = document.getElementById('swap-currency-output') as HTMLInputElement
+    const inputCurrency = inputElement.value
+    const outputCurrency = outputElement.value
+    const inputAmount = formattedAmounts[Field.INPUT]
+    const outputAmount = formattedAmounts[Field.OUTPUT]
+    //const rawTx = await contract.methods.swap(inputCurrency, outputCurrency, inputAmount, outputAmount).encodeABI()
+    //web3.eth.sendTransaction({ to: CONTRACT_ADDRESS, data: rawTx })
+  }
 
   return (
     <>
-      <TokenWarningModal
-        isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
-        tokens={importTokensNotInDefault}
-        onConfirm={handleConfirmTokenWarning}
-      />
-      <OpticsV1Warning />
       <SwapPoolTabs active={'swap'} />
       <AppBody>
         <SwapHeader title={actionLabel} />
@@ -343,11 +353,6 @@ export default function Swap() {
                     color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? theme.primary1 : theme.text2}
                   />
                 </ArrowWrapper>
-                {recipient === null && isExpertMode ? (
-                  <LinkStyledButton id="add-recipient-button" onClick={() => onChangeRecipient('')}>
-                    + Add a send (optional)
-                  </LinkStyledButton>
-                ) : null}
               </AutoRow>
             </AutoColumn>
             <CurrencyInputPanel
@@ -389,127 +394,10 @@ export default function Swap() {
                     />
                   </RowBetween>
                 )}
-                {allowedSlippage !== INITIAL_ALLOWED_SLIPPAGE && (
-                  <RowBetween align="center">
-                    <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
-                      Slippage Tolerance
-                    </ClickableText>
-                    <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
-                      {allowedSlippage / 100}%
-                    </ClickableText>
-                  </RowBetween>
-                )}
               </AutoColumn>
             </Card>
+            <ButtonPrimary borderRadius="12px" onClick={sendSwapTx}>{`${'Swap'}`}</ButtonPrimary>
           </AutoColumn>
-          <BottomGrouping>
-            {swapIsUnsupported ? (
-              <ButtonPrimary disabled={true}>
-                <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
-              </ButtonPrimary>
-            ) : !account ? (
-              <ButtonLight onClick={toggleWalletModal}>{'Connect Wallet'}</ButtonLight>
-            ) : noRoute && userHasSpecifiedInputOutput ? (
-              <GreyCard style={{ textAlign: 'center' }}>
-                <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
-                {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
-              </GreyCard>
-            ) : showRamp ? (
-              <ButtonLight
-                onClick={() => {
-                  new RampInstantSDK({
-                    hostAppName: 'Brokenswap',
-                    hostLogoUrl: 'https://info.ubeswap.org/favicon.png',
-                    userAddress: account,
-                    swapAsset: `CELO_${currencies.INPUT?.symbol}`,
-                    hostApiKey: process.env.REACT_APP_RAMP_KEY,
-                  }).show()
-                }}
-              >
-                Get more {currencies.INPUT?.symbol} via Ramp
-              </ButtonLight>
-            ) : showApproveFlow ? (
-              <RowBetween>
-                <ButtonConfirmed
-                  onClick={approveCallback}
-                  disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
-                  width="48%"
-                  altDisabledStyle={approval === ApprovalState.PENDING} // show solid button while waiting
-                  confirmed={approval === ApprovalState.APPROVED}
-                >
-                  {approval === ApprovalState.PENDING ? (
-                    <AutoRow gap="6px" justify="center">
-                      Approving <Loader stroke="white" />
-                    </AutoRow>
-                  ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
-                    'Approved'
-                  ) : (
-                    'Approve ' + currencies[Field.INPUT]?.symbol
-                  )}
-                </ButtonConfirmed>
-                <ButtonError
-                  onClick={() => {
-                    if (isExpertMode) {
-                      handleSwap()
-                    } else {
-                      setSwapState({
-                        tradeToConfirm: trade,
-                        attemptingTxn: false,
-                        swapErrorMessage: undefined,
-                        showConfirm: true,
-                        txHash: undefined,
-                      })
-                    }
-                  }}
-                  width="48%"
-                  id="swap-button"
-                  disabled={
-                    !isValid || approval !== ApprovalState.APPROVED || (priceImpactSeverity > 3 && !isExpertMode)
-                  }
-                  error={isValid && priceImpactSeverity > 2}
-                >
-                  <Text fontSize={16} fontWeight={500}>
-                    {priceImpactSeverity > 3 && !isExpertMode
-                      ? `Price Impact High`
-                      : `${actionLabel}${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
-                  </Text>
-                </ButtonError>
-              </RowBetween>
-            ) : (
-              <ButtonError
-                onClick={() => {
-                  if (isExpertMode) {
-                    handleSwap()
-                  } else {
-                    setSwapState({
-                      tradeToConfirm: trade,
-                      attemptingTxn: false,
-                      swapErrorMessage: undefined,
-                      showConfirm: true,
-                      txHash: undefined,
-                    })
-                  }
-                }}
-                id="swap-button"
-                disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
-                error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
-              >
-                <Text fontSize={20} fontWeight={500}>
-                  {swapInputError
-                    ? swapInputError
-                    : priceImpactSeverity > 3 && !isExpertMode
-                    ? `Price Impact Too High`
-                    : `${actionLabel}${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
-                </Text>
-              </ButtonError>
-            )}
-            {showApproveFlow && (
-              <Column style={{ marginTop: '1rem' }}>
-                <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />
-              </Column>
-            )}
-            {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
-          </BottomGrouping>
         </Wrapper>
       </AppBody>
       {!swapIsUnsupported ? (

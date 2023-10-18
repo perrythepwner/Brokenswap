@@ -16,11 +16,11 @@ RUN true \
     && true
 
 # setup and deploy challenge handler
-ENV HTTP_PORT=1337
 ENV PYTHONPATH /usr/lib/python
 
 COPY chall_handler/requirements.txt /root
 RUN python3 -m pip install -r /root/requirements.txt 
 
+COPY chall_handler/98-start-gunicorn /startup/
 COPY chall_handler/eth_sandbox/ /usr/lib/python/eth_sandbox/
 COPY chall_handler/chal.py /home/ctf/chal.py

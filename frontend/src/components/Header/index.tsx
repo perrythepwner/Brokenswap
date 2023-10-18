@@ -26,11 +26,19 @@ import brokenswapIcon from '../../assets/images/brokenswap-icon.png';
 import brokenswapLogo from '../../assets/images/brokenswap-logo.png';
 import { useDarkModeManager } from '../../state/user/hooks'
 import { YellowCard } from '../Card'
-import Menu from '../Menu'
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
-import ChartsMenuGroup from './ChartsMenuGroup'
 import UbeBalanceContent from './UbeBalanceContent'
+import { CloseIcon } from '../../theme'
+import { AutoColumn } from '../Column'
+import { RowBetween } from '../Row'
+
+const ContentWrapper = styled(AutoColumn)`
+  width: 100%;
+  flex: 1 1;
+  position: relative;
+  padding: 1rem;
+`
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -366,6 +374,11 @@ export default function Header() {
   const countUpValue = relevantDigits(aggregateBalance)
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
+  const [showMessageModal, setShowMessageModal] = useState(false)
+  const openMessageModal = () => {
+    setShowMessageModal(true)
+  }
+
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false)
 
   const onDrawerClose = () => {
@@ -384,18 +397,8 @@ export default function Header() {
       <HeaderRow>
         <Title to="/">
           <UbeIcon>
-            <StyledMobileLogo
-              width={'32px'}
-              height={'36px'}
-              src={brokenswapIcon}
-              alt="Brokenswap"
-            />
-            <StyledDesktopLogo
-              width={'265px'}
-              height={'50px'}
-              src={brokenswapLogo}
-              alt="Brokenswap"
-            />
+            <StyledMobileLogo width={'32px'} height={'36px'} src={brokenswapIcon} alt="Brokenswap" />
+            <StyledDesktopLogo width={'265px'} height={'50px'} src={brokenswapLogo} alt="Brokenswap" />
           </UbeIcon>
         </Title>
         <HeaderLinks>
@@ -415,60 +418,13 @@ export default function Header() {
           >
             {'Pool'}
           </StyledNavLink>
-          <StyledNavLink id="farm-nav-link" to="/farm">
-            {'Farm'}
-          </StyledNavLink>
-          <StyledNavLinkExtraSmall id={`stake-nav-link`} to={'/stake'}>
-            {'Stake'}
-          </StyledNavLinkExtraSmall>
           <StyledNavLink id={`docs-nav-link`} to={'/docs'}>
             {'Docs'}
           </StyledNavLink>
-          <ChartsMenuGroup />
         </HeaderLinks>
-        <BurgerElement>
-          <Hamburger size={18} hideOutline={false} label="show menu" toggled={drawerVisible} onToggle={onToggle} />
-          <StyledDrawer
-            open={drawerVisible}
-            placement={'right'}
-            width={'250px'}
-            level={null}
-            handler={false}
-            onClose={onDrawerClose}
-          >
-            <StyledMenu>
-              <StyledMenuItem>
-                <StyledNavLink id={'stake-drawer-nav-link'} to={'/stake'} onClick={onDrawerClose}>
-                  {'Stake'}
-                </StyledNavLink>
-              </StyledMenuItem>
-              <StyledMenuItem>
-                <StyledNavLink id={'charts-drawer-nav-link'} to={'#'}>
-                  Charts
-                </StyledNavLink>
-              </StyledMenuItem>
-              <StyledSubMenuItem>
-                <StyledDrawerExternalLink id={`charts-analytics-drawer-nav-link`} href={'https://info.ubeswap.org/'}>
-                  Analytics
-                </StyledDrawerExternalLink>
-              </StyledSubMenuItem>
-              <StyledSubMenuItem>
-                <StyledDrawerExternalLink id={`charts-celo-tracker-drawer-nav-link`} href={'https://celotracker.com/'}>
-                  Celo Tracker
-                </StyledDrawerExternalLink>
-              </StyledSubMenuItem>
-            </StyledMenu>
-          </StyledDrawer>
-        </BurgerElement>
       </HeaderRow>
       <HeaderControls>
         <HeaderElement>
-          <HideSmall>
-            {chainId && NETWORK_LABELS[chainId] && (
-              <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
-            )}
-          </HideSmall>
-
           {aggregateBalance && (
             <UBEWrapper onClick={() => setShowUbeBalanceModal(true)}>
               <UBEAmount active={!!account} style={{ pointerEvents: 'auto' }}>
@@ -504,15 +460,23 @@ export default function Header() {
             ) : null}
             <Web3Status />
           </AccountElement>
-          <StyledNavLink id={`docs-nav-link`} to={'/connection'}>
-            {'Connection'}
-          </StyledNavLink>
         </HeaderElement>
         <HeaderElementWrap>
-          <StyledMenuButton aria-label={'Toggle Dark Mode'} onClick={() => toggleDarkMode()}>
-            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
+          <Modal isOpen={showMessageModal} onDismiss={() => setShowMessageModal(false)}>
+            <ContentWrapper gap={'12px'}>
+              <AutoColumn gap="12px">
+                <RowBetween>
+                  <Text fontWeight={500} fontSize={18}>
+                    {'lol nice try, only dark mode allowed in this CTF sry.'}
+                  </Text>
+                  <CloseIcon onClick={() => setShowMessageModal(false)} />
+                </RowBetween>
+              </AutoColumn>
+            </ContentWrapper>
+          </Modal>
+          <StyledMenuButton aria-label={'Toggle Dark Mode'} onClick={openMessageModal}>
+            {darkMode ? <Moon size={20} /> : <Moon size={20} />}
           </StyledMenuButton>
-          <Menu />
         </HeaderElementWrap>
       </HeaderControls>
     </HeaderFrame>

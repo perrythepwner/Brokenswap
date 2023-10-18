@@ -6,8 +6,25 @@ services:
     image: blockchain_${NAME}_backend:latest
     container_name: blockchain_${NAME}_backend
     environment:
+      - TEAM_UUID=${TEAM_UUID}
       - SHARED_SECRET=${SHARED_SECRET}
+      - PUBLIC_IP=${PUBLIC_IP}
       - FLAG=${FLAG}
       - PORT=${PORT}
+      - SRV_PORT=${SRV_PORT}
+    expose:
+      - 0
     ports:
       - ${PORT}:${PORT}
+
+  frontend:
+    build: ./frontend/
+    image: blockchain_${NAME}_frontend:latest
+    container_name: blockchain_${NAME}_frontend
+    environment:
+      - HTTP_PORT=${HTTP_PORT}
+    entrypoint: yarn start
+    expose:
+      - 0
+    ports:
+      - ${HTTP_PORT}:${HTTP_PORT}

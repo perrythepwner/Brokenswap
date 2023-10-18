@@ -10,7 +10,6 @@ import Polling from '../components/Header/Polling'
 import URLWarning from '../components/Header/URLWarning'
 import Popups from '../components/Popups'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
-import Connection from './Connection'
 import Docs from './Docs'
 import Earn from './Earn'
 import Manage from './Earn/Manage'
@@ -70,9 +69,7 @@ export default function App() {
 
   return (
     <Suspense fallback={null}>
-      <Route component={DarkModeQueryParamReader} />
       <AppWrapper>
-        <URLWarning />
         <HeaderWrapper>
           <Header />
         </HeaderWrapper>
@@ -82,20 +79,11 @@ export default function App() {
           <ErrorBoundary fallback={<p>An unexpected error occured on this part of the page. Please reload.</p>}>
             <Switch>
               <Route exact strict path="/swap" component={Swap} />
-              <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
               <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
-              <Route exact strict path="/send" component={Send} />
               <Route exact strict path="/find" component={PoolFinder} />
               <Route exact strict path="/pool" component={Pool} />
               <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
               <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
-              <Route exact strict path="/farm" component={Earn} />
-              <Route exact strict path="/farm/:currencyIdA/:currencyIdB/:stakingAddress" component={Manage} />
-              <Route exact strict path="/farm/:currencyId/:stakingAddress" component={ManageSingle} />
-              <Route exact strict path="/dualfarm/:currencyIdA/:currencyIdB/:stakingAddress" component={Manage} />
-              <Route exact strict path="/stake" component={Stake} />
-              <Route exact strict path="/add-proposal" component={AddProposal} />
-              <Route exact strict path="/connection" component={Connection} />
               <Route exact strict path="/docs" component={Docs} />
               <Route component={RedirectPathToSwapOnly} />
             </Switch>

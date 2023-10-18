@@ -60,7 +60,7 @@ const AbsoluteHistoryLink = styled(HistoryLink)`
   left: 1rem;
 `
 
-export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' | 'send' }) {
+export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' }) {
   return (
     <Tabs style={{ marginBottom: '20px', display: 'none' }}>
       <StyledNavLink id={`swap-nav-link`} to={'/swap'} isActive={() => active === 'swap'}>

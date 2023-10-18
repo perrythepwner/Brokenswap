@@ -13,7 +13,7 @@ contract Setup {
     HTBtoken public immutable htb;
 
     constructor(address _player) payable {
-        require(msg.value == 510 ether);
+        require(msg.value == 510 ether, "Setup: wrong amount of ETH");
 
         // deploying both HTB and WETH token
         htb = new HTBtoken(500e18);

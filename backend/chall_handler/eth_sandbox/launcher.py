@@ -3,6 +3,7 @@ import os
 import random
 import string
 import time
+from pathlib import Path
 from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional
 from uuid import UUID
@@ -15,36 +16,13 @@ from web3.types import TxReceipt
 
 from eth_sandbox import get_shared_secret
 
-HTTP_PORT = os.getenv("HTTP_PORT", "8888")
+SRV_PORT = os.getenv("SRV_PORT", "8888")
 PUBLIC_IP = os.getenv("PUBLIC_IP", "127.0.0.1")
 
-CHALLENGE_ID = os.getenv("CHALLENGE_ID", "challenge")
-ENV = os.getenv("ENV", "dev")
+TEAM_UUID = os.getenv("TEAM_UUID", "team")
 FLAG = os.getenv("FLAG", "HTB{placeholder}")
 
 Account.enable_unaudited_hdwallet_features()
-
-
-
-@dataclass
-class Ticket:
-    challenge_id: string
-    team_id: string
-
-
-def check_ticket(ticket: str) -> Ticket:
-    if ENV == "dev":
-        return Ticket(challenge_id=CHALLENGE_ID, team_id="team")
-
-    ticket_info = requests.get(
-        f"https://us-central1-paradigm-ctf-2022.cloudfunctions.net/checkTicket?ticket={ticket}"
-    ).json()
-    if ticket_info["status"] != "VALID":
-        return None
-
-    return Ticket(
-        challenge_id=ticket_info["challengeId"], team_id=ticket_info["teamId"]
-    )
 
 
 @dataclass
@@ -60,9 +38,9 @@ def sendTransaction(web3: Web3, tx: Dict) -> Optional[TxReceipt]:
     if "gasPrice" not in tx:
         tx["gasPrice"] = 0
 
-    # web3.provider.make_request("anvil_impersonateAccount", [tx["from"]])
+    web3.provider.make_request("anvil_impersonateAccount", [tx["from"]])
     txhash = web3.eth.sendTransaction(tx)
-    # web3.provider.make_request("anvil_stopImpersonatingAccount", [tx["from"]])
+    web3.provider.make_request("anvil_stopImpersonatingAccount", [tx["from"]])
 
     while True:
         try:
@@ -76,29 +54,20 @@ def sendTransaction(web3: Web3, tx: Dict) -> Optional[TxReceipt]:
 
     return rcpt
 
-
 def new_launch_instance_action(
     do_deploy: Callable[[Web3, str], str],
+    getChallengeAddress: Callable[[Web3, str], str]
 ):
     def action() -> int:
-        ticket = check_ticket(input("ticket please: "))
-        if not ticket:
-            print("invalid ticket!")
-            return 1
-
-        if ticket.challenge_id != CHALLENGE_ID:
-            print("invalid ticket!")
-            return 1
-
         data = requests.post(
-            f"http://127.0.0.1:{HTTP_PORT}/new",
+            f"http://127.0.0.1:{SRV_PORT}/new",
             headers={
                 "Authorization": f"Bearer {get_shared_secret()}",
                 "Content-Type": "application/json",
             },
             data=json.dumps(
                 {
-                    "team_id": ticket.team_id,
+                    "team_id": TEAM_UUID,
                 }
             ),
         ).json()
@@ -114,7 +83,7 @@ def new_launch_instance_action(
         player_acct = Account.from_mnemonic(mnemonic, account_path=f"m/44'/60'/0'/0/1")
 
         web3 = Web3(Web3.HTTPProvider(
-            f"http://127.0.0.1:{HTTP_PORT}/{uuid}",
+            f"http://127.0.0.1:{SRV_PORT}/{uuid}",
             request_kwargs={
                 "headers": {
                     "Authorization": f"Bearer {get_shared_secret()}",
@@ -124,8 +93,9 @@ def new_launch_instance_action(
         ))
 
         setup_addr = do_deploy(web3, deployer_acct.address, player_acct.address)
+        target_addr, weth_addr, htb_addr = getChallengeAddress(web3, setup_addr)
 
-        with open(f"/tmp/{ticket.team_id}", "w") as f:
+        with open(f"/tmp/{TEAM_UUID}", "w") as f:
             f.write(
                 json.dumps(
                     {
@@ -139,11 +109,15 @@ def new_launch_instance_action(
         print()
         print(f"your private blockchain has been deployed")
         print(f"it will automatically terminate in 30 minutes")
-        print(f"here's some useful information")
-        print(f"uuid:           {uuid}")
-        print(f"rpc endpoint:   http://{PUBLIC_IP}:{HTTP_PORT}/{uuid}")
-        print(f"private key:    {player_acct.privateKey.hex()}")
-        print(f"setup contract: {setup_addr}")
+        print(f"here's your connection info:")
+        print(f"team uuid:              {uuid}")
+        print(f"rpc endpoint:           http://{PUBLIC_IP}:{SRV_PORT}/{uuid}")
+        print(f"player private key:     {player_acct.privateKey.hex()}")
+        print(f"player address:         {player_acct.address}")
+        print(f"setup contract:         {setup_addr}")
+        print(f"target contract:        {target_addr}")
+        print(f"WETH token contract:    {weth_addr}")
+        print(f"HTB token contract:     {htb_addr}")
         return 0
 
     return Action(name="launch new instance", handler=action)
@@ -151,24 +125,15 @@ def new_launch_instance_action(
 
 def new_kill_instance_action():
     def action() -> int:
-        ticket = check_ticket(input("ticket please: "))
-        if not ticket:
-            print("invalid ticket!")
-            return 1
-
-        if ticket.challenge_id != CHALLENGE_ID:
-            print("invalid ticket!")
-            return 1
-
         data = requests.post(
-            f"http://127.0.0.1:{HTTP_PORT}/kill",
+            f"http://127.0.0.1:{SRV_PORT}/kill",
             headers={
                 "Authorization": f"Bearer {get_shared_secret()}",
                 "Content-Type": "application/json",
             },
             data=json.dumps(
                 {
-                    "team_id": ticket.team_id,
+                    "team_id": TEAM_UUID,
                 }
             ),
         ).json()
@@ -192,29 +157,21 @@ def new_get_flag_action(
     checker: Callable[[Web3, str], bool] = is_solved_checker,
 ):
     def action() -> int:
-        ticket = check_ticket(input("ticket please: "))
-        if not ticket:
-            print("invalid ticket!")
-            return 1
-
-        if ticket.challenge_id != CHALLENGE_ID:
-            print("invalid ticket!")
-            return 1
-
         try:
-            with open(f"/tmp/{ticket.team_id}", "r") as f:
+            with open(f"/tmp/{TEAM_UUID}", "r") as f:
                 data = json.loads(f.read())
         except:
-            print("bad ticket")
+            print("team instance not found, launch a new instance first")
             return 1
 
-        web3 = Web3(Web3.HTTPProvider(f"http://127.0.0.1:{HTTP_PORT}/{data['uuid']}"))
+        web3 = Web3(Web3.HTTPProvider(f"http://127.0.0.1:{SRV_PORT}/{data['uuid']}"))
 
         if not checker(web3, data['address']):
             print("are you sure you solved it?")
             return 1
 
         print(FLAG)
+        print()
         return 0
 
     return Action(name="get flag", handler=action)

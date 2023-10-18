@@ -22,8 +22,7 @@ from eth_sandbox import *
 app = Flask(__name__)
 CORS(app)
 
-HTTP_PORT = os.getenv("HTTP_PORT", "8545")
-ETH_RPC_URL = os.getenv("ETH_RPC_URL")
+SRV_PORT = os.getenv("SRV_PORT", "8888")
 
 try:
     os.mkdir("/tmp/instances-by-team")
@@ -52,6 +51,7 @@ def get_instance_by_team(team: str) -> Dict:
 def delete_instance_info(node_info: Dict):
     os.remove(f'/tmp/instances-by-uuid/{node_info["uuid"]}')
     os.remove(f'/tmp/instances-by-team/{node_info["team"]}')
+    os.remove(f'/tmp/{node_info["team"]}')
 
 
 def create_instance_info(node_info: Dict):
@@ -95,11 +95,9 @@ def launch_node(team_id: str) -> Dict:
             mnemonic,
             "--port",
             str(port),
-            "--fork-url",
-            ETH_RPC_URL,
             "--block-base-fee-per-gas",
             "0",
-        ],
+        ]
     )
 
     web3 = Web3(Web3.HTTPProvider(f"http://127.0.0.1:{port}"))
@@ -260,4 +258,4 @@ def proxy(uuid):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=HTTP_PORT)
+    app.run(host="0.0.0.0", port=SRV_PORT)
