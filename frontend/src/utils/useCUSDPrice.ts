@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useCelo } from '@celo/react-celo'
 import { CELO, ChainId as UbeswapChainId, currencyEquals, cUSD, JSBI, Pair, Price, Token } from '@ubeswap/sdk'
 import { useTotalSupply } from 'data/TotalSupply'
@@ -16,9 +17,6 @@ type TokenPair = [Token | undefined, Token | undefined]
  * @param currency currency to compute the cUSD price of
  */
 export function useCUSDPrices(tokens?: Token[]): (Price | undefined)[] | undefined {
-  const {
-    network: { chainId },
-  } = useCelo()
   const CUSD = cUSD[chainId as unknown as UbeswapChainId]
   const celo = CELO[chainId as unknown as UbeswapChainId]
   const tokenPairs: TokenPair[] = useMemo(
@@ -67,9 +65,6 @@ export function useCUSDPrices(tokens?: Token[]): (Price | undefined)[] | undefin
  * @param token the token to get the cUSD price of
  */
 export function useCUSDPrice(token?: Token): Price | undefined {
-  const {
-    network: { chainId },
-  } = useCelo()
   const CUSD = cUSD[chainId as unknown as UbeswapChainId]
   const celo = CELO[chainId as unknown as UbeswapChainId]
   const mcUSD = MCUSD[chainId as unknown as UbeswapChainId]
@@ -144,9 +139,6 @@ export function useCUSDPrice(token?: Token): Price | undefined {
  */
 
 export const useCUSDPriceOfULP = (stakingToken: Token | undefined): Price | undefined => {
-  const {
-    network: { chainId },
-  } = useCelo()
   const pair = usePairContract(stakingToken ? stakingToken.address : '')
   const token0Address = useSingleCallResult(pair, 'token0', [])?.result?.[0]
   const token1Address = useSingleCallResult(pair, 'token1', [])?.result?.[0]

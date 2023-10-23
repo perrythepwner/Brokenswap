@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useCelo } from '@celo/react-celo'
 import { JSBI, Pair, Percent, Token, TokenAmount } from '@ubeswap/sdk'
 import { useCallback } from 'react'
@@ -27,7 +28,7 @@ export function useDerivedBurnInfo(
   }
   error?: string
 } {
-  const { address: account } = useCelo()
+  
 
   const { independentField, typedValue } = useBurnState()
 

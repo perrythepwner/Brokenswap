@@ -63,22 +63,11 @@ export function useIsDarkMode(): boolean {
 
 export function useDarkModeManager(): [boolean, () => void] {
   const dispatch = useDispatch<AppDispatch>()
-  const darkMode = true // should be useIsDarkMode() but in ctf only dark mode allowed
-  const { updateTheme } = useCelo()
+  const darkMode = true // should be useIsDarkMode() but in this ctf only dark mode allowed
 
   useEffect(() => {
     const _colors = colors(darkMode)
-    updateTheme({
-      background: _colors.bg2,
-      error: _colors.red1,
-      primary: _colors.primary1,
-      secondary: _colors.bg3,
-      text: _colors.text1,
-      textSecondary: _colors.text2,
-      textTertiary: _colors.text2,
-      muted: _colors.text4,
-    })
-  }, [updateTheme, darkMode])
+  }, [darkMode])
 
   const toggleSetDarkMode = useCallback(() => {
     dispatch(updateUserDarkMode({ userDarkMode: !darkMode }))
@@ -216,14 +205,11 @@ export function useRemoveUserAddedToken(): (chainId: number, address: string) =>
 }
 
 export function useUserAddedTokens(): Token[] {
-  const { network } = useCelo()
-  const chainId = network.chainId
   const serializedTokensMap = useSelector<AppState, AppState['user']['tokens']>(({ user: { tokens } }) => tokens)
 
   return useMemo(() => {
-    if (!chainId) return []
-    return Object.values(serializedTokensMap[chainId] ?? {}).map(deserializeToken)
-  }, [serializedTokensMap, chainId])
+    return Object.values(serializedTokensMap[1] ?? {}).map(deserializeToken)
+  }, [serializedTokensMap, 1])
 }
 
 function serializePair(pair: Pair): SerializedPair {
@@ -266,8 +252,8 @@ export function toV2LiquidityToken([tokenA, tokenB]: [Token, Token]): Token {
  * Returns all the pairs of tokens that are tracked by the user for the current chain ID.
  */
 export function useTrackedTokenPairs(): [Token, Token][] {
-  const { network } = useCelo()
-  const chainId = network.chainId
+  
+  const chainId = 62
   const tokens = useAllTokens()
 
   // pinned pairs

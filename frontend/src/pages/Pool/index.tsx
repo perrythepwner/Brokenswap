@@ -1,4 +1,4 @@
-import { useCelo } from '@celo/react-celo'
+// @ts-nocheck
 import { Pair } from '@ubeswap/sdk'
 import React, { useContext, useMemo } from 'react'
 import { Link } from 'react-router-dom'
@@ -17,7 +17,6 @@ import { usePairs } from '../../data/Reserves'
 import { toV2LiquidityToken, useTrackedTokenPairs } from '../../state/user/hooks'
 import { useTokenBalancesWithLoadingIndicator } from '../../state/wallet/hooks'
 import { ExternalLink, HideSmall, StyledInternalLink, TYPE } from '../../theme'
-import LiquidityWarning from './LiquidityWarning'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 640px;
@@ -73,7 +72,7 @@ const EmptyProposals = styled.div`
 
 export default function Pool() {
   const theme = useContext(ThemeContext)
-  const { address: account } = useCelo()
+  
 
   // fetch the user's balances of all tracked V2 LP tokens
   const trackedTokenPairs = useTrackedTokenPairs()
@@ -86,7 +85,7 @@ export default function Pool() {
     [tokenPairsWithLiquidityTokens]
   )
   const [v2PairsBalances, fetchingV2PairBalances] = useTokenBalancesWithLoadingIndicator(
-    account ?? undefined,
+    undefined,
     liquidityTokens
   )
 
@@ -108,7 +107,6 @@ export default function Pool() {
   return (
     <>
       <PageWrapper>
-        <LiquidityWarning />
         <SwapPoolTabs active={'pool'} />
         <VoteCard>
           <CardNoise />

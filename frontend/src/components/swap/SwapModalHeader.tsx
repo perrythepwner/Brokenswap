@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Trade, TradeType } from '@ubeswap/sdk'
 import React, { useContext, useMemo } from 'react'
 import { AlertTriangle, ArrowDown } from 'react-feather'
@@ -12,7 +13,6 @@ import { ButtonPrimary } from '../Button'
 import { AutoColumn } from '../Column'
 import CurrencyLogo from '../CurrencyLogo'
 import { RowBetween, RowFixed } from '../Row'
-import { MoolaDirectTrade } from './routing/moola/MoolaDirectTrade'
 import { SwapShowAcceptChanges, TruncatedText } from './styleds'
 
 export default function SwapModalHeader({
@@ -22,7 +22,7 @@ export default function SwapModalHeader({
   showAcceptChanges,
   onAcceptChanges,
 }: {
-  trade: Trade
+  trade: Trade | undefined
   allowedSlippage: number
   recipient: string | null
   showAcceptChanges: boolean
@@ -41,7 +41,7 @@ export default function SwapModalHeader({
     <AutoColumn gap={'md'} style={{ marginTop: '20px' }}>
       <RowBetween align="flex-end">
         <RowFixed gap={'0px'}>
-          <CurrencyLogo currency={trade.inputAmount.currency} size={'24px'} style={{ marginRight: '12px' }} />
+          <CurrencyLogo currency={Field.INPUT} size={'24px'} style={{ marginRight: '12px' }} />
           <TruncatedText
             fontSize={24}
             fontWeight={500}

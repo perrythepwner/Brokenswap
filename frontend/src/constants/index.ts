@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CELO, ChainId, cUSD, JSBI, Percent, Token } from '@ubeswap/sdk'
 import ERC20Abi from 'constants/abis/erc20.json'
 import TimelockAbi from 'constants/abis/ITimelock.json'
@@ -11,11 +12,7 @@ import { UBE } from './tokens'
 
 export { UBE } from './tokens'
 
-export const ROUTER_ADDRESS = '0xE3D8bd6Aed4F159bc8000a9cD47CffDb95F96121'
-
-export const UBESWAP_MOOLA_ROUTER_ADDRESS = '0x7d28570135a2b1930f331c507f65039d4937f66c'
-
-export const MINIMA_ROUTER_ADDRESS = '0xa730B463395f5ca07EcE5cefeccF7f45e1E2C9Bf'
+export const BROKENSWAP_ADDRESS = process.env.REACT_APP_BROKENSWAP_ADDRESS
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -142,16 +139,16 @@ export const CEUR = {
 
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
-  [ChainId.MAINNET]: [cUSD, CELO, CEUR, UBE, MCUSD, MCEUR, MCELO, POOF].map((el) => el[ChainId.MAINNET]),
-  [ChainId.ALFAJORES]: [cUSD, CELO, CEUR].map((el) => el[ChainId.ALFAJORES]),
-  [ChainId.BAKLAVA]: [cUSD, CELO].map((el) => el[ChainId.BAKLAVA]),
-}
+  [ChainId.MAINNET]: [cUSD, CELO, CEUR, UBE, MCUSD, MCEUR, MCELO, POOF].map((el) => el[ChainId.MAINNET] as Token),
+  [ChainId.ALFAJORES]: [cUSD, CELO, CEUR].map((el) => el[ChainId.ALFAJORES] as Token),
+  [ChainId.BAKLAVA]: [cUSD, CELO].map((el) => el[ChainId.BAKLAVA] as Token),
+} as ChainTokenList
 
 // used for display in the default list when adding liquidity
 export const SUGGESTED_BASES: ChainTokenList = {
   ...BASES_TO_CHECK_TRADES_AGAINST,
-  [ChainId.MAINNET]: [MCUSD, MCEUR, CELO].map((el) => el[ChainId.MAINNET]),
-  [ChainId.ALFAJORES]: [MCUSD, MCEUR, CELO].map((el) => el[ChainId.ALFAJORES]),
+  [ChainId.MAINNET]: [MCUSD, MCEUR, CELO].map((el) => el[ChainId.MAINNET]).filter((el): el is Token => el !== null),
+  [ChainId.ALFAJORES]: [MCUSD, MCEUR, CELO].map((el) => el[ChainId.ALFAJORES]).filter((el): el is Token => el !== null),
 }
 
 // used to construct the list of all pairs we consider by default in the frontend
@@ -166,10 +163,19 @@ export const PINNED_PAIRS: { [chainId: number]: [Token, Token][] } = {
     [MCEUR, UBE],
   ].map((el) => el.map((t) => t[ChainId.MAINNET]) as [Token, Token]),
   [ChainId.ALFAJORES]: [
-    [cUSD, CELO],
-    [MCUSD, CELO],
-  ].map((el) => el.map((t) => t[ChainId.ALFAJORES]) as [Token, Token]),
+    [cUSD[ChainId.ALFAJORES], CELO[ChainId.ALFAJORES]],
+    [MCUSD[ChainId.ALFAJORES], CELO[ChainId.ALFAJORES]],
+  ].map(
+    (el) =>
+      el.map((t) =>
+        hasChainId(t, ChainId.ALFAJORES) ? (t as Token & { [chainId: number]: Token })[ChainId.ALFAJORES] : null
+      ) as [Token, Token]
+  ),
   [ChainId.BAKLAVA]: [[cUSD[ChainId.BAKLAVA], CELO[ChainId.BAKLAVA]]],
+}
+
+function hasChainId(token: Token, chainId: number): token is Token & { [chainId: number]: Token } {
+  return typeof (token as Token & { [chainId: number]: Token })[chainId] !== 'undefined'
 }
 
 export const NetworkContextName = 'NETWORK'

@@ -12,7 +12,6 @@ import { ButtonPrimary } from '../Button'
 import { AutoColumn } from '../Column'
 import CurrencyLogo from '../CurrencyLogo'
 import { RowBetween, RowFixed } from '../Row'
-import { MoolaDirectTrade } from './routing/moola/MoolaDirectTrade'
 import { SwapShowAcceptChanges, TruncatedText } from './styleds'
 
 export default function LimitOrderModalHeader({
@@ -98,7 +97,7 @@ export default function LimitOrderModalHeader({
           </RowBetween>
         </SwapShowAcceptChanges>
       ) : null}
-      {!(trade instanceof MoolaDirectTrade) && (
+      {true && (
         <AutoColumn justify="flex-start" gap="sm" style={{ padding: '12px 0 0 0px' }}>
           {trade.tradeType === TradeType.EXACT_INPUT ? (
             <TYPE.italic textAlign="left" style={{ width: '100%' }}>

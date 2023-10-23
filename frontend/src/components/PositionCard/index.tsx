@@ -47,14 +47,12 @@ interface PositionCardProps {
 }
 
 export function MinimalPositionCard({ pair, border }: PositionCardProps) {
-  const { address: account } = useCelo()
-
   const currency0 = pair.token0
   const currency1 = pair.token1
 
   const [showMore, setShowMore] = useState(false)
 
-  const userPoolBalance = useTokenBalance(account ?? undefined, pair.liquidityToken)
+  const userPoolBalance = useTokenBalance(undefined, pair.liquidityToken)
   const totalPoolTokens = useTotalSupply(pair.liquidityToken)
 
   const poolTokenPercentage =
@@ -156,14 +154,12 @@ export function MinimalPositionCard({ pair, border }: PositionCardProps) {
 }
 
 export default function FullPositionCard({ pair, border, stakedBalance }: PositionCardProps) {
-  const { address: account } = useCelo()
-
   const currency0 = pair.token0
   const currency1 = pair.token1
 
   const [showMore, setShowMore] = useState(false)
 
-  const userDefaultPoolBalance = useTokenBalance(account ?? undefined, pair.liquidityToken)
+  const userDefaultPoolBalance = useTokenBalance(undefined, pair.liquidityToken)
   const totalPoolTokens = useTotalSupply(pair.liquidityToken)
 
   // if staked balance balance provided, add to standard liquidity amount
@@ -288,15 +284,6 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
               </Text>
             </FixedHeightRow>
 
-            <ButtonSecondary padding="8px" borderRadius="8px">
-              <ExternalLink
-                style={{ width: '100%', textAlign: 'center' }}
-                href={`https://info.ubeswap.org/account/${account}`}
-              >
-                {'View accrued fees and analytics'}
-                <span style={{ fontSize: '11px' }}>↗</span>
-              </ExternalLink>
-            </ButtonSecondary>
             {userDefaultPoolBalance && JSBI.greaterThan(userDefaultPoolBalance.raw, BIG_INT_ZERO) && (
               <RowBetween marginTop="10px">
                 <ButtonPrimary

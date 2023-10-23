@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Address } from '@celo/contractkit'
 import { useCelo } from '@celo/react-celo'
 import { BigNumber } from 'ethers'
@@ -18,7 +19,7 @@ type VoteMap = {
 }
 
 export const useVoteCasts = (romulusAddress: Address) => {
-  const { address } = useCelo()
+  
   const mountRef = useRef(true)
   const romulusContract = useRomulusDelegateContract(romulusAddress)
   const [voteEvents, setVoteEvents] = useState<VoteMap | undefined>(undefined)

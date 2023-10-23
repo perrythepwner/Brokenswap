@@ -1,14 +1,12 @@
 import os
 import random
-import socket
 import subprocess
 import signal
-import sys
 import json
 import time
 from dataclasses import dataclass
-from threading import Lock, Thread
-from typing import Any, Dict, Tuple
+from threading import Thread
+from typing import Dict
 from uuid import uuid4
 
 import requests
@@ -49,9 +47,10 @@ def get_instance_by_team(team: str) -> Dict:
 
 
 def delete_instance_info(node_info: Dict):
+    os.remove(f'/tmp/{node_info["team"]}')
     os.remove(f'/tmp/instances-by-uuid/{node_info["uuid"]}')
     os.remove(f'/tmp/instances-by-team/{node_info["team"]}')
-    os.remove(f'/tmp/{node_info["team"]}')
+    os.remove(f'/tmp/connection-info-by-team/{node_info["team"]}')
 
 
 def create_instance_info(node_info: Dict):
@@ -205,11 +204,11 @@ def kill():
 
 ALLOWED_NAMESPACES = ["web3", "eth", "net"]
 
-
 @app.route("/<string:uuid>", methods=["POST"])
 @cross_origin()
 def proxy(uuid):
     body = request.get_json()
+    print(body)
     if not body:
         return "invalid content type, only application/json is supported"
 
@@ -222,7 +221,7 @@ def proxy(uuid):
             "id": body["id"],
             "error": {
                 "code": -32602,
-                "message": "invalid uuid specified",
+                "message": "No instance is running for the uuid specified!",
             },
         }
 
@@ -251,9 +250,10 @@ def proxy(uuid):
                 "message": "invalid request",
             },
         }
-
+    
     resp = requests.post(f"http://127.0.0.1:{node_info['port']}", json=body)
     response = Response(resp.content, resp.status_code, resp.raw.headers.items())
+    print(response.response)
     return response
 
 

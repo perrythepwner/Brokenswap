@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useCelo, useProvider } from '@celo/react-celo'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -11,8 +12,8 @@ const BLOCK_NUMBER_MINIMUM_DIFF = 5
 
 export default function Updater(): null {
   const library = useProvider()
-  const { network } = useCelo()
-  const chainId = network.chainId
+  
+  const chainId = 62
   const dispatch = useDispatch()
   const blockNumber = useBlockNumber()
 

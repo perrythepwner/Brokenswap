@@ -84,10 +84,9 @@ export function useCurrencyBalance(account?: string, currency?: Token): TokenAmo
 
 // mimics useAllBalances
 export function useAllTokenBalances(): { [tokenAddress: string]: TokenAmount | undefined } {
-  const { address: account } = useCelo()
   const allTokens = useAllTokens()
   const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens])
-  const balances = useTokenBalances(account ?? undefined, allTokensArray)
+  const balances = useTokenBalances(undefined, allTokensArray)
   return balances ?? {}
 }
 

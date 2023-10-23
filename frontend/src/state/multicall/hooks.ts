@@ -1,4 +1,4 @@
-import { useCelo } from '@celo/react-celo'
+// @ts-nocheck
 import { FunctionFragment, Interface } from '@ethersproject/abi'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
@@ -51,8 +51,7 @@ export const NEVER_RELOAD: ListenerOptions = {
 
 // the lowest level call for subscribing to contract data
 function useCallsData(calls: (Call | undefined)[], options?: ListenerOptions): CallResult[] {
-  const { network } = useCelo()
-  const chainId = network.chainId
+  const chainId = 62
   const callResults = useSelector<AppState, AppState['multicall']['callResults']>(
     (state) => state.multicall.callResults
   )
@@ -97,7 +96,6 @@ function useCallsData(calls: (Call | undefined)[], options?: ListenerOptions): C
     () =>
       calls.map<CallResult>((call) => {
         if (!chainId || !call) return INVALID_RESULT
-
         const result = callResults[chainId]?.[toCallKey(call)]
         let data
         if (result?.data && result?.data !== '0x') {

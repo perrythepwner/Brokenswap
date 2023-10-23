@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { AccountsWrapper } from '@celo/contractkit/lib/wrappers/Accounts'
 import { useCelo, useProvider } from '@celo/react-celo'
 import ENS from '@ensdomains/ensjs'
@@ -21,7 +22,7 @@ export default function useAccountSummary(address?: string | null): {
 } {
   const [summary, setSummary] = useState<AccountSummary | null>(null)
   const [nom, setNom] = useState<string | null>(null)
-  const { kit } = useCelo()
+  
   const provider = useProvider()
 
   useEffect(() => {

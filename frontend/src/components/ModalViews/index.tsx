@@ -47,8 +47,8 @@ export function SubmittedView({
   hash: string | undefined
 }) {
   const theme = useContext(ThemeContext)
-  const { network } = useCelo()
-  const chainId = network.chainId as unknown as ChainId
+  
+  const chainId = 62
 
   return (
     <ConfirmOrLoadingWrapper>
@@ -59,14 +59,6 @@ export function SubmittedView({
       <ConfirmedIcon>
         <ArrowUpCircle strokeWidth={0.5} size={90} color={theme.primary1} />
       </ConfirmedIcon>
-      <AutoColumn gap="100px" justify={'center'}>
-        {children}
-        {chainId && hash && (
-          <ExternalLink href={`${network.explorer}/tx/${hash}`} style={{ marginLeft: '4px' }}>
-            <TYPE.subHeader>{'View transaction on Celo Explorer'}</TYPE.subHeader>
-          </ExternalLink>
-        )}
-      </AutoColumn>
     </ConfirmOrLoadingWrapper>
   )
 }

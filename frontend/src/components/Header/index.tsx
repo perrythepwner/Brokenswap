@@ -12,7 +12,6 @@ import React, { useState } from 'react'
 import { Moon, Sun } from 'react-feather'
 import { NavLink } from 'react-router-dom'
 import { Text } from 'rebass'
-import { useAggregateUbeBalance, useTokenBalance } from 'state/wallet/hooks'
 import styled from 'styled-components'
 import { TYPE } from 'theme'
 import { ExternalLink } from 'theme/components'
@@ -27,8 +26,6 @@ import brokenswapLogo from '../../assets/images/brokenswap-logo.png';
 import { useDarkModeManager } from '../../state/user/hooks'
 import { YellowCard } from '../Card'
 import Row, { RowFixed } from '../Row'
-import Web3Status from '../Web3Status'
-import UbeBalanceContent from './UbeBalanceContent'
 import { CloseIcon } from '../../theme'
 import { AutoColumn } from '../Column'
 import { RowBetween } from '../Row'
@@ -358,21 +355,10 @@ const StyledDrawerExternalLink = styled(StyledExternalLink).attrs({
 `}
 `
 
-const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-  [ChainId.Mainnet]: 'Celo',
-  [ChainId.Alfajores]: 'Alfajores',
-  [ChainId.Baklava]: 'Baklava',
-}
-
 export default function Header() {
-  const { address: account, network } = useCelo()
-  const chainId = network.chainId as UbeswapChainId
-  const userCELOBalance = useTokenBalance(account ?? undefined, CELO[chainId as unknown as UbeswapChainId])
+  const userCELOBalance = 0
   const [darkMode, toggleDarkMode] = useDarkModeManager()
   const [showUbeBalanceModal, setShowUbeBalanceModal] = useState<boolean>(false)
-  const aggregateBalance: TokenAmount | undefined = useAggregateUbeBalance()
-  const countUpValue = relevantDigits(aggregateBalance)
-  const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   const [showMessageModal, setShowMessageModal] = useState(false)
   const openMessageModal = () => {
@@ -391,9 +377,6 @@ export default function Header() {
 
   return (
     <HeaderFrame>
-      <Modal isOpen={showUbeBalanceModal} onDismiss={() => setShowUbeBalanceModal(false)}>
-        <UbeBalanceContent setShowUbeBalanceModal={setShowUbeBalanceModal} />
-      </Modal>
       <HeaderRow>
         <Title to="/">
           <UbeIcon>
@@ -421,46 +404,13 @@ export default function Header() {
           <StyledNavLink id={`docs-nav-link`} to={'/docs'}>
             {'Docs'}
           </StyledNavLink>
+          <StyledNavLink id={`swap-nav-link`} to={'/connection'}>
+            {'Connection Info'}
+          </StyledNavLink>
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>
-        <HeaderElement>
-          {aggregateBalance && (
-            <UBEWrapper onClick={() => setShowUbeBalanceModal(true)}>
-              <UBEAmount active={!!account} style={{ pointerEvents: 'auto' }}>
-                {account && (
-                  <HideSmall>
-                    <TYPE.white
-                      style={{
-                        paddingRight: '.4rem',
-                      }}
-                    >
-                      <CountUp
-                        key={countUpValue}
-                        isCounting
-                        start={parseFloat(countUpValuePrevious)}
-                        end={parseFloat(countUpValue)}
-                        thousandsSeparator={','}
-                        duration={1}
-                      />
-                    </TYPE.white>
-                  </HideSmall>
-                )}
-                UBE
-              </UBEAmount>
-              <CardNoise />
-            </UBEWrapper>
-          )}
-
-          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            {account && userCELOBalance ? (
-              <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                {relevantDigits(userCELOBalance) ?? '0.00'} CELO
-              </BalanceText>
-            ) : null}
-            <Web3Status />
-          </AccountElement>
-        </HeaderElement>
+        <HeaderElement>Balance</HeaderElement>
         <HeaderElementWrap>
           <Modal isOpen={showMessageModal} onDismiss={() => setShowMessageModal(false)}>
             <ContentWrapper gap={'12px'}>

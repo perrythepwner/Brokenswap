@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useCelo } from '@celo/react-celo'
 import { TransactionResponse } from '@ethersproject/providers'
 import { ChainId } from '@ubeswap/sdk'
@@ -13,8 +14,8 @@ export function useTransactionAdder(): (
   response: TransactionResponse,
   customData?: { summary?: string; approval?: { tokenAddress: string; spender: string }; claim?: { recipient: string } }
 ) => void {
-  const { network, address: account } = useCelo()
-  const chainId = network.chainId as unknown as ChainId
+  
+  const chainId = 62
   const dispatch = useDispatch<AppDispatch>()
 
   return useCallback(
@@ -41,8 +42,8 @@ export function useTransactionAdder(): (
 
 // returns all the transactions for the current chain
 export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
-  const { network } = useCelo()
-  const chainId = network.chainId
+  
+  const chainId = 62
 
   const state = useSelector<AppState, AppState['transactions']>((state) => state.transactions)
 

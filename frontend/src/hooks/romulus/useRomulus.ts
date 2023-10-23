@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Address } from '@celo/contractkit'
 import { useCelo } from '@celo/react-celo'
 import { ChainId as UbeswapChainId, JSBI, TokenAmount } from '@ubeswap/sdk'
@@ -15,8 +16,8 @@ export const useRomulus = (
   quorumVotes: TokenAmount | undefined
   proposalThreshold: TokenAmount | undefined
 } => {
-  const { address, network } = useCelo()
-  const chainId = network.chainId
+  
+  const chainId = 62
   const ube = chainId ? UBE[chainId as unknown as UbeswapChainId] : undefined
 
   const { romulus, tokenAddress } = useRomulusInfo(romulusAddress as string)

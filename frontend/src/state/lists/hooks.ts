@@ -1,7 +1,6 @@
+// @ts-nocheck
 import { ChainId } from '@celo/react-celo'
-import UBESWAP_TOKEN_LIST from '@ubeswap/default-token-list'
 import { Token } from '@ubeswap/sdk'
-import UNISWAP_TOKEN_LIST from '@uniswap/default-token-list'
 import { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
@@ -9,8 +8,12 @@ import sortByListPriority from 'utils/listSort'
 
 import { AppState } from '../index'
 import { UNSUPPORTED_LIST_URLS } from './../../constants/lists'
+import tokenList from './../../constants/token-list.json'
 
 type TagDetails = Tags[keyof Tags]
+
+const TOKEN_LIST: TokenList = tokenList
+
 export interface TagInfo extends TagDetails {
   id: string
 }
@@ -20,11 +23,9 @@ export interface TagInfo extends TagDetails {
  */
 export class WrappedTokenInfo extends Token {
   public readonly tokenInfo: TokenInfo
-  public readonly tags: TagInfo[]
-  constructor(tokenInfo: TokenInfo, tags: TagInfo[]) {
+  constructor(tokenInfo: TokenInfo) {
     super(tokenInfo.chainId, tokenInfo.address, tokenInfo.decimals, tokenInfo.symbol, tokenInfo.name)
     this.tokenInfo = tokenInfo
-    this.tags = tags
   }
   public get logoURI(): string | undefined {
     return this.tokenInfo.logoURI
@@ -41,9 +42,7 @@ export type TokenAddressMap = Readonly<{
  * An empty result, useful as a default.
  */
 const EMPTY_LIST: TokenAddressMap = {
-  [ChainId.Mainnet]: {},
-  [ChainId.Alfajores]: {},
-  [ChainId.Baklava]: {},
+  [1]: {},
 }
 
 const listCache: WeakMap<TokenList, TokenAddressMap> | null =
@@ -55,14 +54,7 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
 
   const map = list.tokens.reduce<TokenAddressMap>(
     (tokenMap, tokenInfo) => {
-      const tags: TagInfo[] =
-        tokenInfo.tags
-          ?.map((tagId) => {
-            if (!list.tags?.[tagId]) return undefined
-            return { ...list.tags[tagId], id: tagId }
-          })
-          ?.filter((x): x is TagInfo => Boolean(x)) ?? []
-      const token = new WrappedTokenInfo(tokenInfo, tags)
+      const token = new WrappedTokenInfo(tokenInfo)
       if (tokenMap[token.chainId]?.[token.address] !== undefined)
         throw Error(`Duplicate tokens found for ${token.name}`)
       return {
@@ -143,10 +135,8 @@ export function useInactiveListUrls(): string[] {
 
 // get all the tokens from active lists, combine with local default tokens
 export function useCombinedActiveList(): TokenAddressMap {
-  const activeListUrls = useActiveListUrls()
-  const activeTokens = useCombinedTokenMapFromUrls(activeListUrls)
-  const defaultTokenMap = listToTokenMap({ ...UBESWAP_TOKEN_LIST, ...UNISWAP_TOKEN_LIST })
-  return combineMaps(activeTokens, defaultTokenMap)
+  const defaultTokenMap = listToTokenMap(TOKEN_LIST)
+  return defaultTokenMap
 }
 
 // all tokens from inactive lists
@@ -157,7 +147,7 @@ export function useCombinedInactiveList(): TokenAddressMap {
 
 // used to hide warnings on import for default tokens
 export function useDefaultTokenList(): TokenAddressMap {
-  return { ...listToTokenMap(UBESWAP_TOKEN_LIST), ...listToTokenMap(UNISWAP_TOKEN_LIST) }
+  return listToTokenMap(TOKEN_LIST)
 }
 
 // list of tokens not supported on interface, used to show warnings and prevent swaps and adds

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useCelo } from '@celo/react-celo'
 import { CELO, cEUR, ChainId, cUSD, JSBI, Pair, Percent, Price, Token, TokenAmount } from '@ubeswap/sdk'
 import { useCallback, useMemo } from 'react'
@@ -59,7 +60,7 @@ export function useDerivedMintInfo(
   showRampA: boolean
   showRampB: boolean
 } {
-  const { address: account, network } = useCelo()
+  
 
   const { independentField, typedValue, otherTypedValue } = useMintState()
 

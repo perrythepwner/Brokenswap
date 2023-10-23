@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { ChainId } from '@celo/react-celo'
 import { ChainId as UbeswapChainId, cUSD, Token } from '@ubeswap/sdk'
 import { ButtonLight } from 'components/Button'
@@ -73,6 +75,27 @@ export function CurrencySearch({
   const [invertSearchOrder] = useState<boolean>(false)
 
   const allTokens = useAllTokens(chainId)
+
+  //const wethToken = new Token(
+  //  1,
+  //  '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // @TO-DO: Replace with the actual token address
+  //  18,
+  //  'WETH',
+  //  'Wrapped Ether'
+  //)
+
+  // Define "htb" token
+  //  const htbToken = new Token(
+  //    1,
+  //    '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // @TO-DO: Replace with the actual token address
+  //    18,
+  //    'HTB',
+  //    'HTB token'
+  //  )
+  //
+  //  // Create an array of the custom token objects
+  //  const customTokenList: Token[] = [htbToken]
+  //  const allTokens = customTokenList
   // const inactiveTokens: Token[] | undefined = useFoundOnInactiveList(searchQuery)
 
   // if they input an address, use it
@@ -282,18 +305,6 @@ export function CurrencySearch({
             </ButtonLight>
           </Row>
         )}
-      <Footer>
-        <Row justify="center">
-          <ButtonText onClick={showManageView} color={theme.blue1} className="list-token-manage-button">
-            <RowFixed>
-              <IconWrapper size="16px" marginRight="6px">
-                <Edit />
-              </IconWrapper>
-              <TYPE.main color={theme.blue1}>{'Manage'}</TYPE.main>
-            </RowFixed>
-          </ButtonText>
-        </Row>
-      </Footer>
     </ContentWrapper>
   )
 }

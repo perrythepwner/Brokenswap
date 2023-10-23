@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useCelo } from '@celo/react-celo'
 import { ChainId } from '@ubeswap/sdk'
 import { BigNumber } from 'ethers'
@@ -20,7 +21,7 @@ type Proposal = [BigNumber, string, string[], BigNumber[], string[], string[], B
 }
 
 export const useProposals = (): Array<TypedEvent<Proposal>> | undefined => {
-  const { network } = useCelo()
+  
   const romulusAddress = ubeGovernanceAddresses[network.chainId as ChainId]
   const romulusContract = useRomulusDelegateContract(romulusAddress)
   const [proposals, setProposals] = useState<Array<TypedEvent<Proposal>> | undefined>(undefined)

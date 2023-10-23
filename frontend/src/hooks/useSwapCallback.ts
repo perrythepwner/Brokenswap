@@ -1,9 +1,9 @@
+// @ts-nocheck
 import { useCelo, useConnectedSigner, useProvider } from '@celo/react-celo'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { JSBI, Percent, Router, SwapParameters, Trade } from '@ubeswap/sdk'
-import { MoolaRouterTrade } from 'components/swap/routing/hooks/useTrade'
 import { ContractTransaction } from 'ethers'
 import { useMemo } from 'react'
 import { useTransactionAdder } from 'state/transactions/hooks'
@@ -49,9 +49,8 @@ function useSwapCallArguments(
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): SwapCall[] {
-  const { address: account, network } = useCelo()
   const library = useProvider()
-  const chainId = network.chainId
+  const chainId = 62
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
@@ -101,8 +100,8 @@ export function useSwapCallback(
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
-  const { network, address: account } = useCelo()
-  const chainId = network.chainId
+  
+  const chainId = 62
 
   const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
 

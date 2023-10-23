@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Address } from '@celo/contractkit'
 import { BigNumber } from 'ethers'
 import { useRomulusDelegateContract } from 'hooks/useContract'

@@ -1,17 +1,17 @@
+// @ts-nocheck
 import { useCelo, useProvider } from '@celo/react-celo'
 import { Contract } from '@ethersproject/contracts'
+import { Web3Provider, StaticJsonRpcProvider, JsonRpcProvider } from '@ethersproject/providers'
 import IUniswapV2PairABI from '@ubeswap/core/build/abi/IUniswapV2Pair.json'
 import { ChainId } from '@ubeswap/sdk'
 import { ReleaseUbe } from 'generated/ReleaseUbe'
 import { useMemo } from 'react'
-import { StakingInfo } from 'state/stake/hooks'
 
 import ENS_PUBLIC_RESOLVER_ABI from '../constants/abis/ens-public-resolver.json'
 import ERC20_ABI, { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
 import LIMIT_ORDER_PROTOCOL_ABI from '../constants/abis/limit/LimitOrderProtocol.json'
 import ORDER_BOOK_ABI from '../constants/abis/limit/OrderBook.json'
 import ORDER_BOOK_REWARD_DISTRUBUTOR_ABI from '../constants/abis/limit/OrderBookRewardDistributor.json'
-import DUAL_REWARDS_ABI from '../constants/abis/moola/MoolaStakingRewards.json'
 import POOF_TOKEN_ABI from '../constants/abis/poof/PoofToken.json'
 import POOL_MANAGER_ABI from '../constants/abis/pool-manager.json'
 import RELEASE_UBE_ABI from '../constants/abis/ReleaseUbe.json'
@@ -31,11 +31,18 @@ import {
   StakingRewards,
 } from '../generated'
 import { getContract } from '../utils'
+import CONTRACT_ABI from '../constants/Brokenswap.json'
+import Web3 from 'web3'
 
-// returns null on errors
-function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
-  const { address: account } = useCelo()
-  const library = useProvider()
+export const getWeb3Provider = (): StaticJsonRpcProvider => {
+  const RPC_ENDPOINT = process.env.REACT_APP_RPC_ENDPOINT
+  const provider = new StaticJsonRpcProvider(`/api/${RPC_ENDPOINT}`, 31337)
+  return provider
+}
+
+export function useContract(address, ABI, withSignerIfPossible = true) {
+  const library = getWeb3Provider()
+  const account = undefined
 
   return useMemo(() => {
     if (!address || !ABI || !library) return null
@@ -53,7 +60,6 @@ function useContracts(
   ABI: any,
   withSignerIfPossible = true
 ): (Contract | null)[] | null {
-  const { address: account } = useCelo()
   const library = useProvider()
 
   return useMemo(() => {
@@ -75,22 +81,12 @@ export function useENSRegistrarContract(withSignerIfPossible?: boolean): Contrac
   return null
 }
 
-export function useENSResolverContract(address: string | undefined, withSignerIfPossible?: boolean): Contract | null {
-  return useContract(address, ENS_PUBLIC_RESOLVER_ABI, withSignerIfPossible)
-}
-
 export function useBytes32TokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {
   return useContract(tokenAddress, ERC20_BYTES32_ABI, withSignerIfPossible)
 }
 
 export function usePairContract(pairAddress?: string, withSignerIfPossible?: boolean): Contract | null {
   return useContract(pairAddress, IUniswapV2PairABI, withSignerIfPossible)
-}
-
-export function useMulticallContract(): Contract | null {
-  const { network } = useCelo()
-  const chainId = network.chainId as ChainId
-  return useContract(chainId ? MULTICALL_NETWORKS[chainId] : undefined, MULTICALL_ABI, false)
 }
 
 export function useStakingContract(stakingAddress?: string, withSignerIfPossible?: boolean): StakingRewards | null {

@@ -3,7 +3,6 @@ import styled from 'styled-components'
 
 import { TYPE } from '../../theme'
 import { RowBetween } from '../Row'
-import Settings from '../Settings'
 
 const StyledSwapHeader = styled.div`
   padding: 12px 1rem 0px 1.5rem;
@@ -13,20 +12,13 @@ const StyledSwapHeader = styled.div`
   color: ${({ theme }) => theme.text2};
 `
 
-export default function SwapHeader({
-  title = 'Swap',
-  hideSettings = false,
-}: {
-  title?: string
-  hideSettings?: boolean
-}) {
+export default function SwapHeader({ title = 'Swap' }: { title?: string }) {
   return (
     <StyledSwapHeader>
       <RowBetween>
         <TYPE.black my={2} fontWeight={500}>
           {title}
         </TYPE.black>
-        {hideSettings || <Settings />}
       </RowBetween>
     </StyledSwapHeader>
   )

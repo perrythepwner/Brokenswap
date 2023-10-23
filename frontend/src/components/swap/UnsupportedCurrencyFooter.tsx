@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useCelo } from '@celo/react-celo'
 import { ChainId, Token } from '@ubeswap/sdk'
 import { ButtonEmpty } from 'components/Button'
@@ -44,8 +45,8 @@ export default function UnsupportedCurrencyFooter({
   show: boolean
   currencies: (Token | undefined)[]
 }) {
-  const { network } = useCelo()
-  const chainId = network.chainId as unknown as ChainId
+  
+  const chainId = 62
   const [showDetails, setShowDetails] = useState(false)
 
   const tokens = currencies

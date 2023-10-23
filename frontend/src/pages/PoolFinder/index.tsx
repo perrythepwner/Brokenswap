@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useCelo } from '@celo/react-celo'
 import { ChainId as UbeswapChainId, cUSD, JSBI, Token, TokenAmount } from '@ubeswap/sdk'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -26,8 +27,8 @@ enum Fields {
 }
 
 export default function PoolFinder() {
-  const { address: account, network } = useCelo()
-  const chainId = network.chainId
+  
+  const chainId = 62
 
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [activeField, setActiveField] = useState<number>(Fields.TOKEN1)

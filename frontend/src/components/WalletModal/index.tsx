@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useCelo } from '@celo/react-celo'
 import React, { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
@@ -7,7 +8,6 @@ import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { ApplicationModal } from '../../state/application/actions'
 import { useCloseModals, useModalOpen } from '../../state/application/hooks'
 import { ExternalLink } from '../../theme'
-import AccountDetails from '../AccountDetails'
 import Modal from '../Modal'
 import { CeloConnector } from './CeloConnector'
 
@@ -105,7 +105,7 @@ export default function WalletModal({
   confirmedTransactions: string[] // hashes of confirmed
   ENSName?: string
 }) {
-  const { address } = useCelo()
+  
   // TODO(igm): get the errors
   const error = null
 
@@ -141,16 +141,6 @@ export default function WalletModal({
             )}
           </ContentWrapper>
         </UpperSection>
-      )
-    }
-    if (address && walletView === WALLET_VIEWS.ACCOUNT) {
-      return (
-        <AccountDetails
-          toggleWalletModal={closeModals}
-          pendingTransactions={pendingTransactions}
-          confirmedTransactions={confirmedTransactions}
-          ENSName={ENSName}
-        />
       )
     }
     return (

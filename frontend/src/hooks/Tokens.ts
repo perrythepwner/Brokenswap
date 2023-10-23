@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ChainId, useCelo } from '@celo/react-celo'
 import { parseBytes32String } from '@ethersproject/strings'
 import { currencyEquals, Token } from '@ubeswap/sdk'
@@ -18,9 +19,7 @@ function useTokensFromMap(
   includeUserAdded: boolean,
   chainIdOpt?: ChainId
 ): { [address: string]: Token } {
-  const { network } = useCelo()
-  const chainId = chainIdOpt || network.chainId
-  const userAddedTokens = useUserAddedTokens()
+  const chainId = 62
 
   return useMemo(() => {
     if (!chainId || !tokenMap[chainId]) return {}
@@ -31,24 +30,8 @@ function useTokensFromMap(
       return newMap
     }, {})
 
-    if (includeUserAdded) {
-      return (
-        userAddedTokens
-          // reduce into all ALL_TOKENS filtered by the current chain
-          .reduce<{ [address: string]: Token }>(
-            (tokenMap, token) => {
-              tokenMap[token.address] = token
-              return tokenMap
-            },
-            // must make a copy because reduce modifies the map, and we do not
-            // want to make a copy in every iteration
-            { ...mapWithoutUrls }
-          )
-      )
-    }
-
     return mapWithoutUrls
-  }, [chainId, userAddedTokens, tokenMap, includeUserAdded])
+  }, [chainId, tokenMap, includeUserAdded])
 }
 
 export function useDefaultTokens(): { [address: string]: Token } {
@@ -97,8 +80,7 @@ export function useIsTokenActive(token: Token | undefined | null): boolean {
 
 // used to detect extra search results
 export function useFoundOnInactiveList(searchQuery: string): Token[] | undefined {
-  const { network } = useCelo()
-  const chainId = network.chainId
+  const chainId = 62
   const inactiveTokens = useAllInactiveTokens()
 
   return useMemo(() => {
@@ -142,8 +124,7 @@ export function parseStringOrBytes32(
 // null if loading
 // otherwise returns the token
 export function useToken(tokenAddress?: string): Token | undefined | null {
-  const { network } = useCelo()
-  const chainId = network.chainId
+  const chainId = 62
   const tokens = useAllTokens()
 
   const address = isAddress(tokenAddress)

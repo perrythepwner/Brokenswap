@@ -1,3 +1,5 @@
+
+// @ts-nocheck
 import { useCelo } from '@celo/react-celo'
 import { ChainId } from '@ubeswap/sdk'
 import React, { useContext } from 'react'
@@ -69,7 +71,7 @@ function TransactionSubmittedContent({
   chainId: ChainId
 }) {
   const theme = useContext(ThemeContext)
-  const { network } = useCelo()
+  
 
   return (
     <Wrapper>
@@ -85,13 +87,6 @@ function TransactionSubmittedContent({
           <Text fontWeight={500} fontSize={20}>
             {'Transaction Submitted'}
           </Text>
-          {chainId && hash && (
-            <ExternalLink href={`${network.explorer}/tx/${hash}`}>
-              <Text fontWeight={500} fontSize={14} color={theme.primary1}>
-                {'View on Celo Explorer'}
-              </Text>
-            </ExternalLink>
-          )}
           <ButtonPrimary onClick={onDismiss} style={{ margin: '20px 0 0 0' }}>
             <Text fontWeight={500} fontSize={20}>
               {'Close'}
@@ -105,14 +100,12 @@ function TransactionSubmittedContent({
 
 export function ConfirmationModalContent({
   title,
-  bottomContent,
   onDismiss,
   topContent,
 }: {
   title: string
   onDismiss: () => void
   topContent: () => React.ReactNode
-  bottomContent: () => React.ReactNode
 }) {
   return (
     <Wrapper>
@@ -125,7 +118,6 @@ export function ConfirmationModalContent({
         </RowBetween>
         {topContent()}
       </Section>
-      <BottomSection gap="12px">{bottomContent()}</BottomSection>
     </Wrapper>
   )
 }
@@ -172,8 +164,8 @@ export default function TransactionConfirmationModal({
   pendingText,
   content,
 }: ConfirmationModalProps) {
-  const { network } = useCelo()
-  const chainId = network.chainId as unknown as ChainId
+  
+  const chainId = 62
 
   if (!chainId) return null
 

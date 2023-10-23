@@ -1,8 +1,9 @@
+// @ts-nocheck
 import { useCelo } from '@celo/react-celo'
 import { useEffect, useState } from 'react'
 
 export const useConnectedKit = () => {
-  const { getConnectedKit } = useCelo()
+  
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {

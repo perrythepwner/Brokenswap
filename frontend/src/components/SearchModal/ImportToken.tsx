@@ -48,9 +48,7 @@ interface ImportProps {
 
 export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }: ImportProps) {
   const theme = useTheme()
-
-  const { network } = useCelo()
-  const chainId = network.chainId as unknown as ChainId
+  const chainId = 62
 
   const [confirmed, setConfirmed] = useState(false)
 
@@ -89,14 +87,8 @@ export function ImportToken({ tokens, onBack, onDismiss, handleCurrencySelect }:
                   </TYPE.body>
                   <TYPE.darkGray fontWeight={300}>{token.name}</TYPE.darkGray>
                 </AutoRow>
-                {chainId && (
-                  <ExternalLink href={`${network.explorer}/address/${token.address}`}>
-                    <AddressText>{token.address}</AddressText>
-                  </ExternalLink>
-                )}
                 {list !== undefined ? (
                   <RowFixed>
-                    {list.logoURI && <ListLogo logoURI={list.logoURI} size="12px" />}
                     <TYPE.small ml="6px" color={theme.text3}>
                       via {list.name}
                     </TYPE.small>

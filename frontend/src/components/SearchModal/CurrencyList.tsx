@@ -15,8 +15,8 @@ import CurrencyLogo from '../CurrencyLogo'
 import Loader from '../Loader'
 import { RowFixed } from '../Row'
 import { MouseoverTooltip } from '../Tooltip'
-import ImportRow from './ImportRow'
 import { MenuItem } from './styleds'
+import ImportRow from './ImportRow'
 
 function currencyKey(currency: Token): string {
   return currency instanceof Token ? currency.address : ''
@@ -51,36 +51,6 @@ const TagContainer = styled.div`
   display: flex;
   justify-content: flex-end;
 `
-
-function TokenTags({ currency }: { currency: Token }) {
-  if (!(currency instanceof WrappedTokenInfo)) {
-    return <span />
-  }
-
-  const tags = currency.tags
-  if (!tags || tags.length === 0) return <span />
-
-  const tag = tags[0]
-
-  return (
-    <TagContainer>
-      <MouseoverTooltip text={tag.description}>
-        <Tag key={tag.id}>{tag.name}</Tag>
-      </MouseoverTooltip>
-      {tags.length > 1 ? (
-        <MouseoverTooltip
-          text={tags
-            .slice(1)
-            .map(({ name, description }) => `${name}: ${description}`)
-            .join('; \n')}
-        >
-          <Tag>...</Tag>
-        </MouseoverTooltip>
-      ) : null}
-    </TagContainer>
-  )
-}
-
 function CurrencyRow({
   currency,
   onSelect,
@@ -94,13 +64,10 @@ function CurrencyRow({
   otherSelected: boolean
   style: CSSProperties
 }) {
-  const { address: account } = useCelo()
-
   const key = currencyKey(currency)
   const selectedTokenList = useCombinedActiveList()
   const isOnSelectedList = isTokenOnList(selectedTokenList, currency)
-  const customAdded = useIsUserAddedToken(currency)
-  const balance = useCurrencyBalance(account ?? undefined, currency)
+  const balance = useCurrencyBalance(undefined, currency)
 
   // only show add or remove buttons if not on selected list
   return (
@@ -117,13 +84,10 @@ function CurrencyRow({
           {currency.symbol}
         </Text>
         <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300}>
-          {currency.name} {!isOnSelectedList && customAdded && '• Added by user'}
+          {currency.name} {!isOnSelectedList && '• Added by user'}
         </TYPE.darkGray>
       </Column>
-      <TokenTags currency={currency} />
-      <RowFixed style={{ justifySelf: 'flex-end' }}>
-        {balance ? <Balance balance={balance} /> : account ? <Loader /> : null}
-      </RowFixed>
+      <RowFixed style={{ justifySelf: 'flex-end' }}>{balance ? <Balance balance={balance} /> : null}</RowFixed>
     </MenuItem>
   )
 }
@@ -157,8 +121,8 @@ export default function CurrencyList({
   const Row = useCallback(
     ({ data, index, style }) => {
       const currency: Token = data[index]
-      const isSelected = Boolean(selectedCurrency && currencyEquals(selectedCurrency, currency))
-      const otherSelected = Boolean(otherCurrency && currencyEquals(otherCurrency, currency))
+      const isSelected = Boolean(selectedCurrency && selectedCurrency == currency)
+      const otherSelected = Boolean(otherCurrency && otherCurrency == currency)
       const handleSelect = () => onCurrencySelect(currency)
 
       const token = currency

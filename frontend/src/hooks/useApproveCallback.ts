@@ -1,16 +1,10 @@
+// @ts-nocheck
 import { useCelo, useConnectedSigner } from '@celo/react-celo'
 import { MaxUint256 } from '@ethersproject/constants'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { TokenAmount, Trade } from '@ubeswap/sdk'
-import { useDoTransaction } from 'components/swap/routing'
-import { MoolaRouterTrade } from 'components/swap/routing/hooks/useTrade'
-import { MoolaDirectTrade } from 'components/swap/routing/moola/MoolaDirectTrade'
-import { useMoolaConfig } from 'components/swap/routing/moola/useMoola'
-import { MinimaRouterTrade } from 'components/swap/routing/trade'
 import { useCallback, useMemo } from 'react'
 import { useUserMinApprove } from 'state/user/hooks'
-
-import { MINIMA_ROUTER_ADDRESS, ROUTER_ADDRESS, UBESWAP_MOOLA_ROUTER_ADDRESS } from '../constants'
 import { useTokenAllowance } from '../data/Allowances'
 import { Field } from '../state/swap/actions'
 import { useHasPendingApproval } from '../state/transactions/hooks'
@@ -29,7 +23,7 @@ export function useApproveCallback(
   amountToApprove?: TokenAmount,
   spender?: string
 ): [ApprovalState, () => Promise<void>] {
-  const { address: account } = useCelo()
+  
   const signer = useConnectedSigner() as JsonRpcSigner
 
   const token = amountToApprove instanceof TokenAmount ? amountToApprove.token : undefined
@@ -52,7 +46,6 @@ export function useApproveCallback(
   }, [amountToApprove, currentAllowance, pendingApproval, spender])
 
   const tokenContractDisconnected = useTokenContract(token?.address)
-  const doTransaction = useDoTransaction()
 
   const approve = useCallback(async (): Promise<void> => {
     if (approvalState !== ApprovalState.NOT_APPROVED) {
@@ -106,15 +99,5 @@ export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0) 
     () => (trade ? computeSlippageAdjustedAmounts(trade, allowedSlippage)[Field.INPUT] : undefined),
     [trade, allowedSlippage]
   )
-  const moola = useMoolaConfig()
-  return useApproveCallback(
-    amountToApprove,
-    trade instanceof MinimaRouterTrade
-      ? MINIMA_ROUTER_ADDRESS
-      : trade instanceof MoolaDirectTrade
-      ? moola?.lendingPool
-      : trade instanceof MoolaRouterTrade
-      ? UBESWAP_MOOLA_ROUTER_ADDRESS
-      : ROUTER_ADDRESS
-  )
+  return useApproveCallback()
 }

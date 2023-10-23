@@ -1,10 +1,10 @@
+// @ts-nocheck
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { load, save } from 'redux-localstorage-simple'
 
 import application from './application/reducer'
 import burn from './burn/reducer'
 import { updateVersion } from './global/actions'
-import importfarm from './importfarm/reducer'
 import limit from './limit/reducer'
 import lists from './lists/reducer'
 import mint from './mint/reducer'
@@ -26,7 +26,6 @@ const store = configureStore({
     burn,
     multicall,
     lists,
-    importfarm,
   },
   middleware: [...getDefaultMiddleware({ thunk: false, serializableCheck: false }), save({ states: PERSISTED_KEYS })],
   preloadedState: load({ states: PERSISTED_KEYS }),

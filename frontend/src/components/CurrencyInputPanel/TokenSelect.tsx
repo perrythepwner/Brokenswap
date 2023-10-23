@@ -59,7 +59,7 @@ export default function TokenSelect(props: Props) {
     <>
       <Aligner>
         <CurrencySelect
-          selected={!props.token}
+          selected={true}
           className="open-currency-select-button"
           onClick={() => {
             setModalOpen(true)
@@ -69,7 +69,7 @@ export default function TokenSelect(props: Props) {
             {props.token ? (
               <>
                 <CurrencyLogo currency={props.token} size={'24px'} />
-                <StyledTokenName> {props.token.symbol} </StyledTokenName>
+                <StyledTokenName> {'Symbol'} </StyledTokenName>
               </>
             ) : (
               <>

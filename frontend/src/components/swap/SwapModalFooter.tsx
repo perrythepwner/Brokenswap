@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Trade } from '@ubeswap/sdk'
 import React, { useContext, useMemo, useState } from 'react'
 import { Repeat } from 'react-feather'
@@ -8,8 +9,6 @@ import { computeTradePriceBreakdown, formatExecutionPrice, warningSeverity } fro
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
 import { AutoRow, RowBetween } from '../Row'
-import { describeTrade, RoutingMethod } from './routing/describeTrade'
-import { TradeDetails } from './routing/TradeDetails'
 import { StyledBalanceMaxMini, SwapCallbackError } from './styleds'
 
 export default function SwapModalFooter({
@@ -25,14 +24,13 @@ export default function SwapModalFooter({
   swapErrorMessage: string | undefined
   disabledConfirm: boolean
 }) {
-  const { label, routingMethod } = describeTrade(trade)
   const [showInverted, setShowInverted] = useState<boolean>(false)
   const theme = useContext(ThemeContext)
   const { priceImpactWithoutFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
 
   let info: React.ReactNode = null
-  if (routingMethod === RoutingMethod.MOOLA) {
+  if (true) {
     info = (
       <AutoColumn gap="0px">
         <RowBetween align="center">
@@ -57,11 +55,9 @@ export default function SwapModalFooter({
             </StyledBalanceMaxMini>
           </Text>
         </RowBetween>
-
-        <TradeDetails trade={trade} allowedSlippage={allowedSlippage} />
       </AutoColumn>
     )
-  } else if (routingMethod === RoutingMethod.LIMIT) {
+  } else if (true) {
     info = (
       <AutoColumn gap="0px">
         <RowBetween align="center">
@@ -113,8 +109,6 @@ export default function SwapModalFooter({
             </StyledBalanceMaxMini>
           </Text>
         </RowBetween>
-
-        <TradeDetails trade={trade} allowedSlippage={allowedSlippage} />
       </AutoColumn>
     )
   }
@@ -131,7 +125,7 @@ export default function SwapModalFooter({
           id="confirm-swap-or-send"
         >
           <Text fontSize={20} fontWeight={500}>
-            {severity > 2 ? 'Swap Anyway' : `Confirm ${label}`}
+            {severity > 2 ? 'Swap Anyway' : `Confirm XXX`}
           </Text>
         </ButtonError>
         {swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useCelo } from '@celo/react-celo'
 import { ErrorBoundary } from '@sentry/react'
 import React, { Suspense } from 'react'
@@ -6,8 +7,6 @@ import styled from 'styled-components'
 import { isBanned } from 'utils/isBannedUser'
 
 import Header from '../components/Header'
-import Polling from '../components/Header/Polling'
-import URLWarning from '../components/Header/URLWarning'
 import Popups from '../components/Popups'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import Docs from './Docs'
@@ -23,6 +22,7 @@ import { Stake } from './Stake'
 import AddProposal from './Stake/AddProposal'
 import Swap from './Swap'
 import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
+import Connection from './Connection'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -61,12 +61,6 @@ const Marginer = styled.div`
 `
 
 export default function App() {
-  const { address } = useCelo()
-
-  if (isBanned(address)) {
-    return null
-  }
-
   return (
     <Suspense fallback={null}>
       <AppWrapper>
@@ -75,7 +69,6 @@ export default function App() {
         </HeaderWrapper>
         <BodyWrapper>
           <Popups />
-          <Polling />
           <ErrorBoundary fallback={<p>An unexpected error occured on this part of the page. Please reload.</p>}>
             <Switch>
               <Route exact strict path="/swap" component={Swap} />
@@ -85,6 +78,7 @@ export default function App() {
               <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
               <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
               <Route exact strict path="/docs" component={Docs} />
+              <Route exact strict path="/connection" component={Connection} />
               <Route component={RedirectPathToSwapOnly} />
             </Switch>
           </ErrorBoundary>

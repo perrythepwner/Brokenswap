@@ -21,6 +21,8 @@ ENV PYTHONPATH /usr/lib/python
 COPY chall_handler/requirements.txt /root
 RUN python3 -m pip install -r /root/requirements.txt 
 
+RUN mkdir -p /tmp/connection-info-by-team && chmod 777 /tmp/connection-info-by-team
+
 COPY chall_handler/98-start-gunicorn /startup/
 COPY chall_handler/eth_sandbox/ /usr/lib/python/eth_sandbox/
 COPY chall_handler/chal.py /home/ctf/chal.py

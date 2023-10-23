@@ -3,11 +3,10 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { AddressZero } from '@ethersproject/constants'
 import { Contract } from '@ethersproject/contracts'
 import { keccak256 } from '@ethersproject/keccak256'
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { JsonRpcSigner } from '@ethersproject/providers'
 import { JSBI, Percent, Token, TokenAmount } from '@ubeswap/sdk'
 import { IUniswapV2Router02, UbeswapMoolaRouter } from 'generated/index'
-
-import { ROUTER_ADDRESS, UBESWAP_MOOLA_ROUTER_ADDRESS } from '../constants'
+import { JsonRpcProvider } from '@ethersproject/providers'
 import IUniswapV2Router02ABI from '../constants/abis/IUniswapV2Router02.json'
 import UbeswapMoolaRouterABI from '../constants/abis/UbeswapMoolaRouter.json'
 import { TokenAddressMap } from '../state/lists/hooks'
@@ -51,17 +50,17 @@ export function calculateSlippageAmount(value: TokenAmount, slippage: number): [
 }
 
 // account is not optional
-export function getSigner(library: Web3Provider, account: string): JsonRpcSigner {
+export function getSigner(library: JsonRpcProvider, account: string): JsonRpcSigner {
   return library.getSigner(account).connectUnchecked()
 }
 
 // account is optional
-export function getProviderOrSigner(library: Web3Provider, account?: string): Web3Provider | JsonRpcSigner {
+export function getProviderOrSigner(library: JsonRpcProvider, account?: string): JsonRpcProvider | JsonRpcSigner {
   return account ? getSigner(library, account) : library
 }
 
 // account is optional
-export function getContract(address: string, ABI: any, library: Web3Provider, account?: string): Contract {
+export function getContract(address: string, ABI: any, library: JsonRpcProvider, account?: string): Contract {
   if (!isAddress(address) || address === AddressZero) {
     throw Error(`Invalid 'address' parameter '${address}'.`)
   }
@@ -70,11 +69,11 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
 }
 
 // account is optional
-export function getRouterContract(_: number, library: Web3Provider, account?: string): IUniswapV2Router02 {
+export function getRouterContract(_: number, library: JsonRpcProvider, account?: string): IUniswapV2Router02 {
   return getContract(ROUTER_ADDRESS, IUniswapV2Router02ABI, library, account) as IUniswapV2Router02
 }
 
-export function getMoolaRouterContract(_: number, library: Web3Provider, account?: string): UbeswapMoolaRouter {
+export function getMoolaRouterContract(_: number, library: JsonRpcProvider, account?: string): UbeswapMoolaRouter {
   return getContract(UBESWAP_MOOLA_ROUTER_ADDRESS, UbeswapMoolaRouterABI, library, account) as UbeswapMoolaRouter
 }
 

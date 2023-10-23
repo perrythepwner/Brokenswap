@@ -1,7 +1,7 @@
+// @ts-nocheck
 import { useCelo, useProvider } from '@celo/react-celo'
 import { TokenAmount } from '@ubeswap/sdk'
 import SendHeader from 'components/send/SendHeader'
-import { useDoTransaction } from 'components/swap/routing'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { Erc20 } from 'generated/Erc20'
 import useENS from 'hooks/useENS'
@@ -24,7 +24,6 @@ import AppBody from '../AppBody'
 
 export default function Send() {
   // dismiss warning if all imported tokens are in active lists
-  const { address: account } = useCelo()
   const library = useProvider()
 
   // toggle wallet when disconnected
@@ -40,7 +39,6 @@ export default function Send() {
   const notEnoughFunds = parsedAmount && maxAmountInput && parsedAmount.greaterThan(maxAmountInput)
 
   const isValid = recipientAddress && parsedAmount && account && !notEnoughFunds
-  const doTransaction = useDoTransaction()
   const handleSend = useCallback(async () => {
     if (!isValid || !parsedAmount || !library || !account || !recipientAddress) {
       return

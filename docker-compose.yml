@@ -1,10 +1,18 @@
 version: '3.8'
-    
+
+networks:
+  private:
+
+volumes:
+  shared-connection-info:
+
 services:
   backend:
     build: ./backend/
     image: blockchain_${NAME}_backend:latest
     container_name: blockchain_${NAME}_backend
+    volumes:
+     - shared-connection-info:/tmp/connection-info-by-team/:rw
     environment:
       - TEAM_UUID=${TEAM_UUID}
       - SHARED_SECRET=${SHARED_SECRET}
@@ -12,19 +20,27 @@ services:
       - FLAG=${FLAG}
       - PORT=${PORT}
       - SRV_PORT=${SRV_PORT}
-    expose:
-      - 0
     ports:
       - ${PORT}:${PORT}
+      - ${SRV_PORT}:${SRV_PORT}
+    networks:
+      - private
 
   frontend:
     build: ./frontend/
     image: blockchain_${NAME}_frontend:latest
     container_name: blockchain_${NAME}_frontend
+    volumes:
+     - ./frontend/:/app/:rw
+     - shared-connection-info:/app/public/connection-info-by-team/:rw
     environment:
       - HTTP_PORT=${HTTP_PORT}
+      - REACT_APP_PUBLIC_IP=${PUBLIC_IP}
+      - REACT_APP_SRV_PORT=${SRV_PORT}
+      #- RPC_URL=http://${PUBLIC_IP}:${SRV_PORT}/${TEAM_UUID}
+      - REACT_APP_RPC_ENDPOINT=${TEAM_UUID}
     entrypoint: yarn start
-    expose:
-      - 0
     ports:
       - ${HTTP_PORT}:${HTTP_PORT}
+    networks:
+      - private

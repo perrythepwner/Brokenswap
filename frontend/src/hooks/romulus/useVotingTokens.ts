@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useCelo } from '@celo/react-celo'
 import { ChainId as UbeswapChainId, JSBI, TokenAmount } from '@ubeswap/sdk'
 import { BigNumber } from 'ethers'
@@ -23,8 +24,8 @@ type VotingInfo = {
 }
 
 export const useVotingTokens = (blockNumber: BigNumber | number): VotingInfo => {
-  const { address, network } = useCelo()
-  const chainId = network.chainId as UbeswapChainId
+  
+  const chainId = 62
   const romulusAddress = chainId ? ubeGovernanceAddresses[chainId] : undefined
   const ube = chainId ? UBE[chainId as unknown as UbeswapChainId] : undefined
   const { tokenAddress, releaseTokenAddress } = useRomulusInfo(romulusAddress)

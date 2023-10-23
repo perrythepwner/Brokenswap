@@ -63,19 +63,7 @@ export default function ConfirmLimitOrderModal({
       />
     ) : null
   }, [allowedSlippage, onAcceptChanges, recipient, showAcceptChanges, trade])
-
-  const modalBottom = useCallback(() => {
-    return trade ? (
-      <SwapModalFooter
-        onConfirm={onConfirm}
-        trade={trade}
-        disabledConfirm={showAcceptChanges}
-        swapErrorMessage={swapErrorMessage}
-        allowedSlippage={allowedSlippage}
-      />
-    ) : null
-  }, [allowedSlippage, onConfirm, showAcceptChanges, swapErrorMessage, trade])
-
+  
   // text to show while loading
   const pendingText = `Swapping ${trade?.inputAmount?.toSignificant(6)} ${
     trade?.inputAmount?.currency?.symbol
@@ -90,10 +78,9 @@ export default function ConfirmLimitOrderModal({
           title={`Confirm ${'Limit Order'.toLowerCase()}`}
           onDismiss={onDismiss}
           topContent={modalHeader}
-          bottomContent={modalBottom}
         />
       ),
-    [swapErrorMessage, onDismiss, modalHeader, modalBottom]
+    [swapErrorMessage, onDismiss, modalHeader]
   )
 
   return (

@@ -9,7 +9,6 @@ import Modal from '../Modal'
 import { CurrencySearch } from './CurrencySearch'
 import { ImportList } from './ImportList'
 import { ImportToken } from './ImportToken'
-import Manage from './Manage'
 
 interface CurrencySearchModalProps {
   isOpen: boolean
@@ -93,14 +92,6 @@ export default function CurrencySearchModal({
         />
       ) : modalView === CurrencyModalView.importList && importList && listURL ? (
         <ImportList list={importList} listURL={listURL} onDismiss={onDismiss} setModalView={setModalView} />
-      ) : modalView === CurrencyModalView.manage ? (
-        <Manage
-          onDismiss={onDismiss}
-          setModalView={setModalView}
-          setImportToken={setImportToken}
-          setImportList={setImportList}
-          setListUrl={setListUrl}
-        />
       ) : (
         ''
       )}

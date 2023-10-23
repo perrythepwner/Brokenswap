@@ -34,17 +34,14 @@ export type Chain = {
 export const chains: Chain[] = [
   {
     network: Mainnet,
-    token: new WrappedTokenInfo(
-      {
-        address: '0x471EcE3750Da237f93B8E339c536989b8978a438',
-        name: 'Celo',
-        symbol: 'CELO',
-        chainId: 42220,
-        decimals: 18,
-        logoURI: 'https://raw.githubusercontent.com/ubeswap/default-token-list/master/assets/asset_CELO.png',
-      },
-      []
-    ),
+    token: new WrappedTokenInfo({
+      address: '0x471EcE3750Da237f93B8E339c536989b8978a438',
+      name: 'Celo',
+      symbol: 'CELO',
+      chainId: 42220,
+      decimals: 18,
+      logoURI: 'https://raw.githubusercontent.com/ubeswap/default-token-list/master/assets/asset_CELO.png',
+    }),
     name: 'celo',
     prettyName: 'Celo',
     domain: 1667591279,
@@ -54,17 +51,14 @@ export const chains: Chain[] = [
     ? [
         {
           network: Alfajores,
-          token: new WrappedTokenInfo(
-            {
-              address: '0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9',
-              name: 'Celo',
-              symbol: 'CELO',
-              chainId: 44787,
-              decimals: 18,
-              logoURI: 'https://raw.githubusercontent.com/ubeswap/default-token-list/master/assets/asset_CELO.png',
-            },
-            []
-          ),
+          token: new WrappedTokenInfo({
+            address: '0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9',
+            name: 'Celo',
+            symbol: 'CELO',
+            chainId: 44787,
+            decimals: 18,
+            logoURI: 'https://raw.githubusercontent.com/ubeswap/default-token-list/master/assets/asset_CELO.png',
+          }),
           name: 'alfajores',
           prettyName: 'Alfajores',
           domain: 1000,

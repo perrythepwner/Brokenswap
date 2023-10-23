@@ -37,4 +37,7 @@ module.exports = {
     'import/no-duplicates': 'warn',
     'unused-imports/no-unused-imports': 'error',
   },
+  env: {
+    node: true,
+  },
 }

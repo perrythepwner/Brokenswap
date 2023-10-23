@@ -1,7 +1,7 @@
+// @ts-nocheck
 import { useCelo, useProvider } from '@celo/react-celo'
 import { Contract } from '@ethersproject/contracts'
 import { Percent, Token } from '@ubeswap/sdk'
-import { useDoTransaction } from 'components/swap/routing'
 import React, { useCallback, useContext, useState } from 'react'
 import { ArrowDown, Plus } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -21,11 +21,9 @@ import Row, { RowBetween, RowFixed } from '../../components/Row'
 import Slider from '../../components/Slider'
 import { Dots } from '../../components/swap/styleds'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
-import { ROUTER_ADDRESS } from '../../constants'
 import { useCurrency } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
 import { usePairContract } from '../../hooks/useContract'
-import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { Field } from '../../state/burn/actions'
 import { useBurnActionHandlers, useBurnState, useDerivedBurnInfo } from '../../state/burn/hooks'
 import { useUserSlippageTolerance } from '../../state/user/hooks'
@@ -43,9 +41,9 @@ export default function RemoveLiquidity({
   },
 }: RouteComponentProps<{ currencyIdA: string; currencyIdB: string }>) {
   const [currencyA, currencyB] = [useCurrency(currencyIdA) ?? undefined, useCurrency(currencyIdB) ?? undefined]
-  const { address: account, network, connect } = useCelo()
+  
   const library = useProvider()
-  const chainId = network.chainId
+  const chainId = 62
   const [tokenA, tokenB] = [currencyA, currencyB]
 
   const theme = useContext(ThemeContext)
@@ -65,7 +63,6 @@ export default function RemoveLiquidity({
 
   // txn values
   const [txHash, setTxHash] = useState<string>('')
-  const deadline = useTransactionDeadline()
   const [allowedSlippage] = useUserSlippageTolerance()
 
   const formattedAmounts = {
@@ -89,7 +86,7 @@ export default function RemoveLiquidity({
 
   // allowance handling
   const [signatureData, setSignatureData] = useState<{ v: number; r: string; s: string; deadline: number } | null>(null)
-  const [approval, approveCallback] = useApproveCallback(parsedAmounts[Field.LIQUIDITY], ROUTER_ADDRESS)
+  const [approval, approveCallback] = useApproveCallback(parsedAmounts[Field.LIQUIDITY])
 
   async function onAttemptToApprove() {
     if (!pairContract || !pair || !library || !deadline) throw new Error('missing dependencies')
@@ -121,7 +118,6 @@ export default function RemoveLiquidity({
   )
 
   // tx sending
-  const doTransaction = useDoTransaction()
   async function onRemove() {
     if (!chainId || !library || !account || !deadline) throw new Error('missing dependencies')
     const { [Field.CURRENCY_A]: currencyAmountA, [Field.CURRENCY_B]: currencyAmountB } = parsedAmounts
@@ -325,7 +321,6 @@ export default function RemoveLiquidity({
                 title={'You will receive'}
                 onDismiss={handleDismissConfirmation}
                 topContent={modalHeader}
-                bottomContent={modalBottom}
               />
             )}
             pendingText={pendingText}

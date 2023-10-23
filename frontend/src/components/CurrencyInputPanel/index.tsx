@@ -142,9 +142,8 @@ export default function CurrencyInputPanel({
   disabled = false,
 }: CurrencyInputPanelProps) {
   const [modalOpen, setModalOpen] = useState(false)
-  const { address: account } = useCelo()
 
-  const userBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
+  const userBalance = useCurrencyBalance(undefined, currency ?? undefined)
   const selectedCurrencyBalance = balanceOverride ?? userBalance
   const theme = useTheme()
 
@@ -189,7 +188,7 @@ export default function CurrencyInputPanel({
                   {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
                 </Aligner>
               </CurrencySelect>
-              {account && (
+              {
                 <TYPE.body
                   onClick={onMax}
                   color={theme.text2}
@@ -201,7 +200,7 @@ export default function CurrencyInputPanel({
                     ? (customBalanceText ?? 'Balance: ') + selectedCurrencyBalance?.toSignificant(6)
                     : ' -'}
                 </TYPE.body>
-              )}
+              }
             </RowBetween>
           </LabelRow>
         )}
@@ -216,7 +215,7 @@ export default function CurrencyInputPanel({
                 }}
                 disabled={disabled}
               />
-              {account && currency && label !== 'To' && (
+              {currency && label !== 'To' && (
                 <ButtonGroup>
                   {showHalfButton && <StyledControlButton onClick={onHalf}>50%</StyledControlButton>}
                   {showMaxButton && <StyledControlButton onClick={onMax}>MAX</StyledControlButton>}

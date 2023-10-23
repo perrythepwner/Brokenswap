@@ -22,8 +22,9 @@ def getChallengeAddress(web3: Web3, address):
     targetAddress = setupContract.functions.TARGET().call()
     wethAddress = setupContract.functions.weth().call()
     htbAddress = setupContract.functions.htb().call()
+    feesPoolAddress = setupContract.functions.feesPool().call()
 
-    return targetAddress, wethAddress, htbAddress
+    return targetAddress, feesPoolAddress, wethAddress, htbAddress
 
 eth_sandbox.run_launcher([
     eth_sandbox.new_launch_instance_action(deploy, getChallengeAddress),

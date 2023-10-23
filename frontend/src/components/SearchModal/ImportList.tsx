@@ -91,7 +91,6 @@ export function ImportList({ listURL, list, setModalView, onDismiss }: ImportPro
           <Card backgroundColor={theme.bg2} padding="12px 20px">
             <RowBetween>
               <RowFixed>
-                {list.logoURI && <ListLogo logoURI={list.logoURI} size="40px" />}
                 <AutoColumn gap="sm" style={{ marginLeft: '20px' }}>
                   <RowFixed>
                     <TYPE.body fontWeight={600} mr="6px">

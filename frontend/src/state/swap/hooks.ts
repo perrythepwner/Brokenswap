@@ -1,13 +1,11 @@
+// @ts-nocheck
 import { useCelo } from '@celo/react-celo'
 import { parseUnits } from '@ethersproject/units'
 import { CELO, cEUR, ChainId as UbeswapChainId, cUSD, JSBI, Token, TokenAmount, Trade } from '@ubeswap/sdk'
-import { useMinimaTrade, useUbeswapTradeExactIn, useUbeswapTradeExactOut } from 'components/swap/routing/hooks/useTrade'
-import { MinimaRouterTrade, UbeswapTrade } from 'components/swap/routing/trade'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { ROUTER_ADDRESS } from '../../constants'
 import { useCurrency } from '../../hooks/Tokens'
 import useENS from '../../hooks/useENS'
 import useParsedQueryString from '../../hooks/useParsedQueryString'
@@ -86,34 +84,15 @@ export function tryParseAmount(value?: string, currency?: Token): TokenAmount | 
   return new TokenAmount(currency as Token, JSBI.BigInt(0))
 }
 
-const BAD_RECIPIENT_ADDRESSES: string[] = [
-  '',
-  ROUTER_ADDRESS
-]
-
-/**
- * Returns true if any of the pairs or tokens in a trade have the given checksummed address
- * @param trade to check for the given address
- * @param checksummedAddress address to check in the pairs and tokens
- */
-function involvesAddress(trade: Trade, checksummedAddress: string): boolean {
-  return (
-    trade.route.path.some((token) => token.address === checksummedAddress) ||
-    trade.route.pairs.some((pair) => pair.liquidityToken.address === checksummedAddress)
-  )
-}
-
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedSwapInfo(): {
   currencies: { [field in Field]?: Token }
   currencyBalances: { [field in Field]?: TokenAmount }
   parsedAmount: TokenAmount | undefined
-  v2Trade: MinimaRouterTrade | UbeswapTrade | undefined
+  v2Trade: undefined
   inputError?: string
   showRamp: boolean
 } {
-  const { address: account, network } = useCelo()
-
   const {
     independentField,
     typedValue,
@@ -125,9 +104,9 @@ export function useDerivedSwapInfo(): {
   const inputCurrency = useCurrency(inputCurrencyId)
   const outputCurrency = useCurrency(outputCurrencyId)
   const recipientLookup = useENS(recipient ?? undefined)
-  const to: string | null = (recipient === null ? account : recipientLookup.address) ?? null
+  const to: string | null = null
 
-  const relevantTokenBalances = useCurrencyBalances(account ?? undefined, [
+  const relevantTokenBalances = useCurrencyBalances(undefined, [
     inputCurrency ?? undefined,
     outputCurrency ?? undefined,
   ])
@@ -135,13 +114,13 @@ export function useDerivedSwapInfo(): {
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
-  const minimaBestTradeExactIn = useMinimaTrade(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  const ubeBestTradeExactIn = useUbeswapTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  const bestTradeExactIn =
-    minimaBestTradeExactIn === undefined ? undefined : minimaBestTradeExactIn ?? ubeBestTradeExactIn
-  const bestTradeExactOut = useUbeswapTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
+  //const minimaBestTradeExactIn = useMinimaTrade(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
+  //const ubeBestTradeExactIn = useUbeswapTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
+  //const bestTradeExactIn =
+  //  minimaBestTradeExactIn === undefined ? undefined : minimaBestTradeExactIn ?? ubeBestTradeExactIn
+  //const bestTradeExactOut = useUbeswapTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
 
-  const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
+  //const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
     [Field.OUTPUT]: relevantTokenBalances[1],
@@ -153,9 +132,6 @@ export function useDerivedSwapInfo(): {
   }
 
   let inputError: string | undefined
-  if (!account) {
-    inputError = 'Connect Wallet'
-  }
 
   if (!parsedAmount) {
     inputError = inputError ?? 'Enter an amount'
@@ -165,46 +141,13 @@ export function useDerivedSwapInfo(): {
     inputError = inputError ?? 'Select a token'
   }
 
-  const formattedTo = isAddress(to)
-  if (!to || !formattedTo) {
-    inputError = inputError ?? 'Enter a recipient'
-  } else {
-    if (
-      BAD_RECIPIENT_ADDRESSES.indexOf(formattedTo) !== -1 ||
-      (bestTradeExactIn && involvesAddress(bestTradeExactIn, formattedTo)) ||
-      (bestTradeExactOut && involvesAddress(bestTradeExactOut, formattedTo))
-    ) {
-      inputError = inputError ?? 'Invalid recipient'
-    }
-  }
-
-  const [allowedSlippage] = useUserSlippageTolerance()
-
-  const slippageAdjustedAmounts = v2Trade && allowedSlippage && computeSlippageAdjustedAmounts(v2Trade, allowedSlippage)
-
-  // compare input balance to max input based on version
-  const [balanceIn, amountIn] = [
-    currencyBalances[Field.INPUT],
-    slippageAdjustedAmounts ? slippageAdjustedAmounts[Field.INPUT] : null,
-  ]
-
-  let showRamp = false
-  if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
-    if (
-      amountIn.currency.address === cUSD[network.chainId as unknown as UbeswapChainId].address ||
-      amountIn.currency.address === CELO[network.chainId as unknown as UbeswapChainId].address ||
-      amountIn.currency.address === cEUR[network.chainId as unknown as UbeswapChainId].address
-    ) {
-      showRamp = true
-    }
-    inputError = 'Insufficient ' + amountIn.currency.symbol + ' balance'
-  }
+  const showRamp = false
 
   return {
     currencies,
     currencyBalances,
     parsedAmount,
-    v2Trade: v2Trade ?? undefined,
+    undefined,
     showRamp,
     inputError,
   }
@@ -269,8 +212,7 @@ export function queryParametersToSwapState(parsedQs: ParsedQs, chainId: UbeswapC
 export function useDefaultsFromURLSearch():
   | { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined }
   | undefined {
-  const { network } = useCelo()
-  const chainId = network.chainId as unknown as UbeswapChainId
+  const chainId = 62
   const dispatch = useDispatch<AppDispatch>()
   const parsedQs = useParsedQueryString()
   const [result, setResult] = useState<

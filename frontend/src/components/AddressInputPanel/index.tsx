@@ -77,8 +77,8 @@ export default function AddressInputPanel({
   // triggers whenever the typed value changes
   onChange: (value: string) => void
 }) {
-  const { network } = useCelo()
-  const chainId = network.chainId as unknown as ChainId
+  
+  const chainId = 62
   const theme = useContext(ThemeContext)
 
   const { address, loading } = useENS(value)
@@ -103,11 +103,6 @@ export default function AddressInputPanel({
               <TYPE.black color={theme.text2} fontWeight={500} fontSize={14}>
                 Recipient
               </TYPE.black>
-              {address && chainId && (
-                <ExternalLink href={`${network.explorer}/address/${address}`} style={{ fontSize: '14px' }}>
-                  ({'View on Celo Explorer'})
-                </ExternalLink>
-              )}
             </RowBetween>
             <Input
               className="recipient-address-input"
@@ -116,7 +111,6 @@ export default function AddressInputPanel({
               autoCorrect="off"
               autoCapitalize="off"
               spellCheck="false"
-              placeholder={`${'View on Celo Explorer'}`}
               error={error}
               pattern="^(0x[a-fA-F0-9]{40})$"
               onChange={handleInput}

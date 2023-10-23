@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as UbeswapDefaultList from '@ubeswap/default-token-list'
 import * as UbeswapExperimentalList from '@ubeswap/default-token-list/ubeswap-experimental.token-list.json'
 import { ChainId, Token } from '@ubeswap/sdk'

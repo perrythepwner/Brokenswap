@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useCelo } from '@celo/react-celo'
 import React, { useContext, useMemo } from 'react'
 import { AlertTriangle } from 'react-feather'
@@ -14,7 +15,7 @@ import { useUniqueBestFarms, WarningInfo } from '../Earn/useFarmRegistry'
 
 export default function LiquidityWarning() {
   const theme = useContext(ThemeContext)
-  const { address: account } = useCelo()
+  
 
   const trackedTokenPairs = useTrackedTokenPairs()
   const tokenPairsWithLiquidityTokens = useMemo(

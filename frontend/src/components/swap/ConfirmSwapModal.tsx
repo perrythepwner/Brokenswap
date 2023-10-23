@@ -5,7 +5,6 @@ import TransactionConfirmationModal, {
   ConfirmationModalContent,
   TransactionErrorContent,
 } from '../TransactionConfirmationModal'
-import { describeTrade } from './routing/describeTrade'
 import SwapModalFooter from './SwapModalFooter'
 import SwapModalHeader from './SwapModalHeader'
 
@@ -53,33 +52,18 @@ export default function ConfirmSwapModal({
     () => Boolean(trade && originalTrade && tradeMeaningfullyDiffers(trade, originalTrade)),
     [originalTrade, trade]
   )
-  const { label } = describeTrade(trade)
-
   const modalHeader = useCallback(() => {
-    return trade ? (
+    return (
       <SwapModalHeader
-        trade={trade}
+        trade={undefined}
         allowedSlippage={allowedSlippage}
         recipient={recipient}
         showAcceptChanges={showAcceptChanges}
         onAcceptChanges={onAcceptChanges}
       />
-    ) : null
+    )
   }, [allowedSlippage, onAcceptChanges, recipient, showAcceptChanges, trade])
 
-  const modalBottom = useCallback(() => {
-    return trade ? (
-      <SwapModalFooter
-        onConfirm={onConfirm}
-        trade={trade}
-        disabledConfirm={showAcceptChanges}
-        swapErrorMessage={swapErrorMessage}
-        allowedSlippage={allowedSlippage}
-      />
-    ) : null
-  }, [allowedSlippage, onConfirm, showAcceptChanges, swapErrorMessage, trade])
-
-  // text to show while loading
   const pendingText = `Swapping ${trade?.inputAmount?.toSignificant(6)} ${
     trade?.inputAmount?.currency?.symbol
   } for ${trade?.outputAmount?.toSignificant(6)} ${trade?.outputAmount?.currency?.symbol}`
@@ -89,14 +73,9 @@ export default function ConfirmSwapModal({
       swapErrorMessage ? (
         <TransactionErrorContent onDismiss={onDismiss} message={swapErrorMessage} />
       ) : (
-        <ConfirmationModalContent
-          title={`Confirm ${label}`}
-          onDismiss={onDismiss}
-          topContent={modalHeader}
-          bottomContent={modalBottom}
-        />
+        <ConfirmationModalContent title={`Confirm XXX`} onDismiss={onDismiss} topContent={modalHeader} />
       ),
-    [onDismiss, modalBottom, modalHeader, swapErrorMessage, label]
+    [onDismiss, modalHeader, swapErrorMessage]
   )
 
   return (

@@ -93,7 +93,7 @@ def new_launch_instance_action(
         ))
 
         setup_addr = do_deploy(web3, deployer_acct.address, player_acct.address)
-        target_addr, weth_addr, htb_addr = getChallengeAddress(web3, setup_addr)
+        target_addr, fees_pool_addr, weth_addr, htb_addr = getChallengeAddress(web3, setup_addr)
 
         with open(f"/tmp/{TEAM_UUID}", "w") as f:
             f.write(
@@ -105,19 +105,29 @@ def new_launch_instance_action(
                     }
                 )
             )
+        
+        connection_info = {
+            "Team UUID": TEAM_UUID,
+            "Player UUID": uuid,
+            "RPC URL": f"http://{PUBLIC_IP}:{SRV_PORT}/{uuid}",
+            "Player Private Key": player_acct.privateKey.hex(),
+            "Player Address": player_acct.address,
+            "Setup Contract": setup_addr,
+            "Target Contract": target_addr,
+            "Fees Pool Contract": fees_pool_addr,
+            "WETH Token Contract": weth_addr,
+            "HTB Token Contract": htb_addr,
+        }
 
-        print()
-        print(f"your private blockchain has been deployed")
-        print(f"it will automatically terminate in 30 minutes")
-        print(f"here's your connection info:")
-        print(f"team uuid:              {uuid}")
-        print(f"rpc endpoint:           http://{PUBLIC_IP}:{SRV_PORT}/{uuid}")
-        print(f"player private key:     {player_acct.privateKey.hex()}")
-        print(f"player address:         {player_acct.address}")
-        print(f"setup contract:         {setup_addr}")
-        print(f"target contract:        {target_addr}")
-        print(f"WETH token contract:    {weth_addr}")
-        print(f"HTB token contract:     {htb_addr}")
+        with open(f"/tmp/connection-info-by-team/{TEAM_UUID}", "w") as f:
+            json.dump(connection_info, f, indent=4)
+
+        print("Your private blockchain has been deployed.")
+        print("It will automatically terminate in 30 minutes.")
+        print("Here's your connection info:\n")
+        for key, value in connection_info.items():
+            print(f"{key}: {value}")
+
         return 0
 
     return Action(name="launch new instance", handler=action)
@@ -187,3 +197,5 @@ def run_launcher(actions: List[Action]):
         exit(1)
 
     exit(actions[action].handler())
+
+# to-do: handle exceptions

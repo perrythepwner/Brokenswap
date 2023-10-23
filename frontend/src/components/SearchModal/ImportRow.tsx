@@ -53,14 +53,7 @@ export default function ImportRow({
   showImportView: () => void
   setImportToken: (token: Token) => void
 }) {
-  // gloabls
-  const { network } = useCelo()
-  const chainId = network.chainId
   const theme = useTheme()
-
-  // check if token comes from list
-  const inactiveTokenList = useCombinedInactiveList()
-  const list = chainId && inactiveTokenList?.[chainId]?.[token.address]?.list
 
   // check if already active on list or local storage tokens
   const isAdded = useIsUserAddedToken(token)
@@ -76,14 +69,6 @@ export default function ImportRow({
             <NameOverflow title={token.name}>{token.name}</NameOverflow>
           </TYPE.darkGray>
         </AutoRow>
-        {list && list.logoURI && (
-          <RowFixed>
-            <TYPE.small mr="4px" color={theme.text3}>
-              via {list.name}
-            </TYPE.small>
-            <ListLogo logoURI={list.logoURI} size="12px" />
-          </RowFixed>
-        )}
       </AutoColumn>
       {!isActive && !isAdded ? (
         <ButtonPrimary
