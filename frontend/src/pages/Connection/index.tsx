@@ -1,3 +1,4 @@
+import { useConnectionInfo } from 'hooks/useConnectionInfo'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
@@ -25,37 +26,20 @@ const InfoLabel = ({ label, value }) => (
   </div>
 )
 
-export function ConnectionInfo() {
-  const [connectionData, setConnectionData] = useState([])
-  const RPC_ENDPOINT = process.env.REACT_APP_RPC_ENDPOINT
-
-  useEffect(() => {
-    fetch(`connection-info-by-team/${RPC_ENDPOINT}`)
-      .then((response) => response.json())
-      .then((data) => setConnectionData(data))
-      .catch((error) => {
-        console.error(error)
-        setConnectionData([])
-      })
-  }, [RPC_ENDPOINT])
-
-  return connectionData
-}
-
 export default function Connection() {
-  const connectionData = ConnectionInfo()
+  const [connectionInfo, isInstanceRunning] = useConnectionInfo()
   return (
     <BodyWrapper>
-      <InfoLabel label="Team UUID" value={connectionData['Team UUID']} />
-      <InfoLabel label="Player UUID" value={connectionData['Player UUID']} />
-      <InfoLabel label="RPC URL" value={connectionData['RPC URL']} />
-      <InfoLabel label="Player Private Key" value={connectionData['Player Private Key']} />
-      <InfoLabel label="Player Address" value={connectionData['Player Address']} />
-      <InfoLabel label="Setup Contract" value={connectionData['Setup Contract']} />
-      <InfoLabel label="Target Contract" value={connectionData['Target Contract']} />
-      <InfoLabel label="Fees Pool Contract" value={connectionData['Fees Pool Contract']} />
-      <InfoLabel label="WETH Token Contract" value={connectionData['WETH Token Contract']} />
-      <InfoLabel label="HTB Token Contract" value={connectionData['HTB Token Contract']} />
+      <InfoLabel label="Team UUID" value={connectionInfo['Team UUID']} />
+      <InfoLabel label="Player UUID" value={connectionInfo['Player UUID']} />
+      <InfoLabel label="RPC URL" value={connectionInfo['RPC URL']} />
+      <InfoLabel label="Player Private Key" value={connectionInfo['Player Private Key']} />
+      <InfoLabel label="Player Address" value={connectionInfo['Player Address']} />
+      <InfoLabel label="Setup Contract" value={connectionInfo['Setup Contract']} />
+      <InfoLabel label="Target Contract" value={connectionInfo['Target Contract']} />
+      <InfoLabel label="Fees Pool Contract" value={connectionInfo['Fees Pool Contract']} />
+      <InfoLabel label="WETH Token Contract" value={connectionInfo['WETH Token Contract']} />
+      <InfoLabel label="HTB Token Contract" value={connectionInfo['HTB Token Contract']} />
     </BodyWrapper>
   )
 }

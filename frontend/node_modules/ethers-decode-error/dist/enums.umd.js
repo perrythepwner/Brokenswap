@@ -1,0 +1,2 @@
+!function(r,o){"object"==typeof exports&&"undefined"!=typeof module?o(exports):"function"==typeof define&&define.amd?define(["exports"],o):o((r||self).ethersDecodeError={})}(this,function(r){var o;r.ErrorType=void 0,(o=r.ErrorType||(r.ErrorType={}))[o.UserError=0]="UserError",o[o.EmptyError=1]="EmptyError",o[o.RevertError=2]="RevertError",o[o.PanicError=3]="PanicError",o[o.UnknownError=4]="UnknownError",o[o.CustomError=5]="CustomError"});
+//# sourceMappingURL=enums.umd.js.map

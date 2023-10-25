@@ -8,7 +8,7 @@ import Hamburger from 'hamburger-react'
 import usePrevious from 'hooks/usePrevious'
 import { darken } from 'polished'
 import Drawer from 'rc-drawer'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Moon, Sun } from 'react-feather'
 import { NavLink } from 'react-router-dom'
 import { Text } from 'rebass'
@@ -17,18 +17,26 @@ import { TYPE } from 'theme'
 import { ExternalLink } from 'theme/components'
 import { CountUp } from 'use-count-up'
 import { relevantDigits } from 'utils/relevantDigits'
-
+import TokenBalanceContent from './TokenBalanceContent'
 import Icon from '../../assets/svg/icon-ube.svg'
 import Logo from '../../assets/svg/logo.svg'
 import LogoDark from '../../assets/svg/logo-dark.svg'
-import brokenswapIcon from '../../assets/images/brokenswap-icon.png';
-import brokenswapLogo from '../../assets/images/brokenswap-logo.png';
+import brokenswapIcon from '../../assets/images/brokenswap-icon.png'
+import brokenswapLogo from '../../assets/images/brokenswap-logo.png'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { YellowCard } from '../Card'
 import Row, { RowFixed } from '../Row'
 import { CloseIcon } from '../../theme'
 import { AutoColumn } from '../Column'
 import { RowBetween } from '../Row'
+import { Field } from '../../state/swap/actions'
+import { useDerivedSwapInfo } from 'state/swap/hooks'
+import { useAllTokens } from 'hooks/Tokens'
+import { useTokenBalance } from 'state/wallet/hooks'
+import { useBalances, useConnectionInfo } from 'hooks/useConnectionInfo'
+import { ERC20_ABI } from 'constants/abis/erc20'
+import { Contract, Wallet } from 'ethers'
+import { useWeb3Provider } from 'hooks/useContract'
 
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
@@ -48,7 +56,7 @@ const HeaderFrame = styled.div`
   top: 0;
   position: relative;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 1rem;
+  padding: 0;
   z-index: 2;
 
   @media (max-width: 1115px) {
@@ -68,6 +76,10 @@ const HeaderControls = styled.div`
   flex-direction: row;
   align-items: center;
   justify-self: flex-end;
+  padding-right: 2rem;
+  justify-content: space-between;
+  max-width: 40vw;
+  width: 30vw;
 
   @media (max-width: 1115px) {
     flex-direction: row;
@@ -105,6 +117,7 @@ const HeaderElement = styled.div`
 const HeaderElementWrap = styled.div`
   display: flex;
   align-items: center;
+  width: 100px;
 `
 
 const HeaderRow = styled(RowFixed)`
@@ -175,7 +188,7 @@ const Title = styled(NavLink)`
   }
 `
 
-const UbeIcon = styled.div`
+const BrokenswapIcon = styled.div`
   transition: transform 0.3s ease;
   :hover {
     transform: rotate(-5deg);
@@ -194,9 +207,9 @@ export const StyledNavLink = styled(NavLink).attrs({
   cursor: pointer;
   text-decoration: none;
   color: ${({ theme }) => theme.text2};
-  font-size: 1rem;
+  font-size: 1.1rem;
   width: fit-content;
-  margin: 0 12px;
+  margin: 0 11px;
   font-weight: 500;
 
   &.${activeClassName} {
@@ -257,6 +270,7 @@ const StyledExternalLink = styled(ExternalLink).attrs({
 export const StyledMenuButton = styled.button`
   position: relative;
   width: 100%;
+  max-width: 40px;
   height: 100%;
   border: none;
   background-color: transparent;
@@ -358,7 +372,7 @@ const StyledDrawerExternalLink = styled(StyledExternalLink).attrs({
 export default function Header() {
   const userCELOBalance = 0
   const [darkMode, toggleDarkMode] = useDarkModeManager()
-  const [showUbeBalanceModal, setShowUbeBalanceModal] = useState<boolean>(false)
+  const [showTokenBalanceModal, setShowTokenBalanceModal] = useState<boolean>(true)
 
   const [showMessageModal, setShowMessageModal] = useState(false)
   const openMessageModal = () => {
@@ -375,14 +389,20 @@ export default function Header() {
     setDrawerVisible(toggled)
   }
 
+  const { parsedAmount, currencies } = useDerivedSwapInfo()
+  const [HtbTokenBalance, WethTokenBalance] = useBalances()
+
   return (
     <HeaderFrame>
+      {/*<Modal isOpen={showTokenBalanceModal} onDismiss={() => setShowTokenBalanceModal(false)}>
+        <TokenBalanceContent setShowTokenBalanceModal={setShowTokenBalanceModal} tokens={tokens} />
+      </Modal>*/}
       <HeaderRow>
         <Title to="/">
-          <UbeIcon>
+          <BrokenswapIcon>
             <StyledMobileLogo width={'32px'} height={'36px'} src={brokenswapIcon} alt="Brokenswap" />
-            <StyledDesktopLogo width={'265px'} height={'50px'} src={brokenswapLogo} alt="Brokenswap" />
-          </UbeIcon>
+            <StyledDesktopLogo width={'400px'} height={'75px'} src={brokenswapLogo} alt="Brokenswap" />
+          </BrokenswapIcon>
         </Title>
         <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
@@ -410,7 +430,57 @@ export default function Header() {
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>
-        <HeaderElement>Balance</HeaderElement>
+        <HeaderElement>TOKEN BALANCES:</HeaderElement>
+        <HeaderElementWrap>
+          <TokenWrapper onClick={() => setShowTokenBalanceModal(true)}>
+            <UBEAmount active={true} style={{ pointerEvents: 'auto' }}>
+              {true && (
+                <HideSmall>
+                  <TYPE.white
+                    style={{
+                      paddingRight: '.4rem',
+                    }}
+                  >
+                    <CountUp
+                      isCounting
+                      start={parseFloat('0')}
+                      end={HtbTokenBalance}
+                      thousandsSeparator={','}
+                      duration={1}
+                    />
+                  </TYPE.white>
+                </HideSmall>
+              )}
+              HTB
+            </UBEAmount>
+            <CardNoise />
+          </TokenWrapper>
+        </HeaderElementWrap>
+        <HeaderElementWrap>
+          <TokenWrapper onClick={() => setShowTokenBalanceModal(true)}>
+            <UBEAmount active={true} style={{ pointerEvents: 'auto' }}>
+              {true && (
+                <HideSmall>
+                  <TYPE.white
+                    style={{
+                      paddingRight: '.4rem',
+                    }}
+                  >
+                    <CountUp
+                      isCounting
+                      start={parseFloat('0')}
+                      end={WethTokenBalance}
+                      thousandsSeparator={','}
+                      duration={1}
+                    />
+                  </TYPE.white>
+                </HideSmall>
+              )}
+              WETH
+            </UBEAmount>
+            <CardNoise />
+          </TokenWrapper>
+        </HeaderElementWrap>
         <HeaderElementWrap>
           <Modal isOpen={showMessageModal} onDismiss={() => setShowMessageModal(false)}>
             <ContentWrapper gap={'12px'}>
@@ -442,7 +512,7 @@ const UBEAmount = styled(AccountElement)`
   background: radial-gradient(174.47% 188.91% at 1.84% 0%, ${({ theme }) => theme.primary1} 0%, #2172e5 100%), #edeef2;
 `
 
-const UBEWrapper = styled.span`
+const TokenWrapper = styled.span`
   width: fit-content;
   position: relative;
   cursor: pointer;

@@ -110,6 +110,7 @@ interface CurrencyInputPanelProps {
   hideBalance?: boolean
   pair?: Pair | null
   hideInput?: boolean
+  hideNumericalInput?: boolean
   otherCurrency?: Token | null
   id: string
   showCommonBases?: boolean
@@ -133,6 +134,7 @@ export default function CurrencyInputPanel({
   hideBalance = false,
   pair = null, // used for double token logo
   hideInput = false,
+  hideNumericalInput = false,
   otherCurrency,
   id,
   showCommonBases,
@@ -170,7 +172,7 @@ export default function CurrencyInputPanel({
                   {pair ? (
                     <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
                   ) : currency ? (
-                    <CurrencyLogo currency={currency} size={'24px'} />
+                    <CurrencyLogo currency={currency} size={'32px'} />
                   ) : null}
                   {pair ? (
                     <StyledTokenName className="pair-name-container">
@@ -188,24 +190,11 @@ export default function CurrencyInputPanel({
                   {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
                 </Aligner>
               </CurrencySelect>
-              {
-                <TYPE.body
-                  onClick={onMax}
-                  color={theme.text2}
-                  fontWeight={500}
-                  fontSize={14}
-                  style={{ display: 'inline', cursor: 'pointer' }}
-                >
-                  {!hideBalance && !!currency && selectedCurrencyBalance
-                    ? (customBalanceText ?? 'Balance: ') + selectedCurrencyBalance?.toSignificant(6)
-                    : ' -'}
-                </TYPE.body>
-              }
             </RowBetween>
           </LabelRow>
         )}
         <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} selected={disableCurrencySelect}>
-          {!hideInput && (
+          {!hideInput && !hideNumericalInput && (
             <>
               <NumericalInput
                 className="token-amount-input"

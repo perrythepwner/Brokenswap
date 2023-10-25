@@ -33,15 +33,17 @@ import {
 import { getContract } from '../utils'
 import CONTRACT_ABI from '../constants/Brokenswap.json'
 import Web3 from 'web3'
+import { useConnectionInfo } from './useConnectionInfo'
 
-export const getWeb3Provider = (): StaticJsonRpcProvider => {
-  const RPC_ENDPOINT = process.env.REACT_APP_RPC_ENDPOINT
-  const provider = new StaticJsonRpcProvider(`/api/${RPC_ENDPOINT}`, 31337)
+export function useWeb3Provider() {
+  const [connectionInfo, isIstanceRunning] = useConnectionInfo()
+  const RPC_ENDPOINT = connectionInfo['Player UUID']
+  const provider = new StaticJsonRpcProvider(`/rpc/${RPC_ENDPOINT}`, 31337)
   return provider
 }
 
 export function useContract(address, ABI, withSignerIfPossible = true) {
-  const library = getWeb3Provider()
+  const library = useWeb3Provider()
   const account = undefined
 
   return useMemo(() => {

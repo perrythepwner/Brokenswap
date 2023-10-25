@@ -8,11 +8,11 @@ import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import useENS from 'hooks/useENS'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ArrowDown } from 'react-feather'
+import { ArrowDown, Info } from 'react-feather'
 import ReactGA, { send } from 'react-ga'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
-
+import { decodeError } from 'ethers-decode-error'
 import AddressInputPanel from '../../components/AddressInputPanel'
 import { ButtonConfirmed, ButtonError, ButtonLight, ButtonPrimary } from '../../components/Button'
 import Card, { GreyCard } from '../../components/Card'
@@ -32,8 +32,7 @@ import TokenWarningModal from '../../components/TokenWarningModal'
 import { INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { useAllTokens, useCurrency } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
-import { useContract } from '../../hooks/useContract'
-import { SendSwap } from '../../hooks/useContract'
+import { useContract, useTokenContract } from '../../hooks/useContract'
 import { useToggleSettingsMenu, useWalletModalToggle } from '../../state/application/hooks'
 import { Field } from '../../state/swap/actions'
 import {
@@ -51,12 +50,16 @@ import { useSingleCallResult } from '../../state/multicall/hooks'
 
 import { Contract } from '@ethersproject/contracts'
 import { ethers } from 'ethers'
-import { getWeb3Provider } from '../../hooks/useContract'
-import { ConnectionInfo } from '../Connection'
+import { useWeb3Provider } from '../../hooks/useContract'
+import { useConnectionInfo, useBalances } from '../../hooks/useConnectionInfo'
 import BROKENSWAP_ABI from '../../constants/Brokenswap.json'
 import { CloseIcon } from '../../theme'
 import Modal from '../../components/Modal'
 import styled from 'styled-components'
+import { connect } from 'http2'
+import { ERC20_ABI } from 'constants/abis/erc20'
+import { set } from 'lodash'
+import { formatUnits } from '@ethersproject/units'
 
 // to-do: move to /abis/
 const ContentWrapper = styled(AutoColumn)`
@@ -65,15 +68,21 @@ const ContentWrapper = styled(AutoColumn)`
   position: relative;
   padding: 1rem;
 `
+const Label = styled.span`
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+`
+
+const InfoLabel = ({ label, value }) => (
+  <div>
+    <Label>{label}: </Label>
+    {value}
+  </div>
+)
 
 export default function Swap() {
   const theme = useContext(ThemeContext)
 
-  // for expert mode
-  // const toggleSettings = useToggleSettingsMenu()
-  // const [isExpertMode] = useExpertModeManager()
-
-  // swap state
   const { independentField, typedValue, recipient } = useSwapState()
   const {
     v2Trade,
@@ -178,36 +187,68 @@ export default function Swap() {
     [onCurrencySelection]
   )
 
-  const [isInstanceRunning, setIsInstanceRunning] = useState(false)
-  const connectionInfo = ConnectionInfo()
-
-  useEffect(() => {
-    if (Array.isArray(connectionInfo) && connectionInfo.length === 0) {
-      setIsInstanceRunning(false)
-    } else {
-      setIsInstanceRunning(true)
-    }
-  }, [connectionInfo])
-
   const [showPopup, setShowPopup] = useState(false)
+  const [showTxPopup, setShowTxPopup] = useState(false)
+  const [transactionInfo, setTransactionInfo] = useState({
+    title: '',
+    txHash: '',
+    logs: [],
+    errorCode: '',
+    errorMessage: '',
+    errorBody: '',
+    revertReason: '',
+  })
+  const [connectionInfo, isInstanceRunning] = useConnectionInfo()
+  const [HtbTokenBalance, WethTokenBalance] = useBalances()
+  const provider = useWeb3Provider()
 
-  const handleSendSwap = () => {
-    if (isInstanceRunning) {
-      SendSwap()
+  async function sendSwap(inputToken: Token, outputToken: Token, inputAmount: string) {
+    if (isInstanceRunning && provider) {
+      try {
+        console.log(
+          '===========INITIALIZING SWAP===========',
+          'inputToken',
+          inputToken,
+          'outputToken',
+          outputToken,
+          'inputAmount',
+          inputAmount
+        )
+        const BROKENSWAP_ADDRESS = connectionInfo['Target Contract']
+        const signer = new ethers.Wallet(connectionInfo['Player Private Key'], provider)
+        // approve transfer first
+        const inputTokenContract = new Contract(inputToken.address, ERC20_ABI, signer)
+        const approval = await inputTokenContract.approve(BROKENSWAP_ADDRESS, ethers.utils.parseUnits(inputAmount, 18))
+        const approvalRcpt = await approval.wait()
+        const Brokenswap = new Contract(BROKENSWAP_ADDRESS, BROKENSWAP_ABI.abi, signer)
+        const transaction = await Brokenswap.swap(
+          inputToken.address,
+          outputToken.address,
+          ethers.utils.parseUnits(inputAmount, 18)
+        )
+        const TxRcpt = await transaction.wait()
+        const currentBlock = await provider.getBlockNumber()
+        const events = await Brokenswap.queryFilter('Swap', currentBlock, currentBlock)
+        console.log('===========SWAP SUCCESSFUL===========', 'Transaction Receipt', TxRcpt)
+        setTransactionInfo({
+          title: 'SWAP SUCCESSFUL',
+          txHash: TxRcpt.transactionHash,
+          logs: events[0].topics,
+        })
+        setShowTxPopup(true)
+      } catch (error) {
+        console.log('===========SWAP FAILED===========', 'ERROR', error)
+        setTransactionInfo({
+          title: 'SWAP FAILED',
+          revertReason: error.reason || undefined,
+          errorCode: error.code || undefined,
+          errorMessage: (error.code !== ('UNPREDICTABLE_GAS_LIMIT' && 'SERVER_ERROR')) ? error.message : undefined,
+          errorBody: error.error?.error?.body ?? error.error?.body ?? error.body ?? undefined,
+        })
+        setShowTxPopup(true)
+      }
     } else {
       setShowPopup(true)
-    }
-  }
-
-  async function SendSwap() {
-    if (isInstanceRunning) {
-      const BROKENSWAP_ADDRESS = connectionInfo['Target Contract']
-      const provider = getWeb3Provider()
-      const signer = new ethers.Wallet('0x5be4ad1a1d6c8298ec36dae3920bc0180ee928427b40ffaf3f26507abc303cbd', provider)
-      const Brokenswap = new Contract(BROKENSWAP_ADDRESS, BROKENSWAP_ABI.abi, signer)
-      const result = await Brokenswap.FEERATE()
-      console.log('result', result)
-      return result
     }
   }
 
@@ -226,7 +267,7 @@ export default function Swap() {
             txHash={txHash}
             recipient={recipient}
             allowedSlippage={undefined}
-            onConfirm={SendSwap}
+            onConfirm={undefined}
             swapErrorMessage={swapErrorMessage}
             onDismiss={handleConfirmDismiss}
           />
@@ -266,6 +307,7 @@ export default function Swap() {
               label={independentField === Field.INPUT && 'To'}
               showMaxButton={false}
               currency={currencies[Field.OUTPUT]}
+              hideNumericalInput={true}
               onCurrencySelect={handleOutputSelect}
               otherCurrency={currencies[Field.INPUT]}
               id="swap-currency-output"
@@ -301,15 +343,78 @@ export default function Swap() {
                 )}
               </AutoColumn>
             </Card>
-            <ButtonPrimary borderRadius="12px" onClick={handleSendSwap}>{`${'Swap'}`}</ButtonPrimary>
+            <ButtonPrimary
+              borderRadius="12px"
+              onClick={() => sendSwap(currencies[Field.INPUT], currencies[Field.OUTPUT], formattedAmounts[Field.INPUT])}
+            >{`${'Swap'}`}</ButtonPrimary>
             <Modal isOpen={showPopup} onDismiss={() => setShowPopup(false)}>
               <ContentWrapper>
                 <AutoColumn gap="12px">
                   <RowBetween>
                     <Text fontWeight={500} fontSize={18}>
-                      {'No instance found!'}
+                      {'No instance found!\nStart a new instance in the Challenge Handler and then Reload the page.'}
                     </Text>
                     <CloseIcon onClick={() => setShowPopup(false)} />
+                  </RowBetween>
+                </AutoColumn>
+              </ContentWrapper>
+            </Modal>
+
+            <Modal isOpen={showTxPopup} onDismiss={() => setShowTxPopup(false)}>
+              <ContentWrapper gap={'12x'}>
+                <AutoColumn gap="12px">
+                  <RowBetween>
+                    <Text
+                      fontWeight={800}
+                      fontSize={18}
+                      style={transactionInfo.error === undefined ? { color: '#8878C3' } : { color: '#E83B46' }}
+                    >
+                      {transactionInfo.title}
+                    </Text>
+                    <CloseIcon onClick={() => setShowTxPopup(false)} />
+                  </RowBetween>
+                  <RowBetween>
+                    <Text fontWeight={400} fontSize={18}>
+                      {transactionInfo.txHash && <InfoLabel label="Transaction Hash" value={transactionInfo.txHash} />}
+                      {transactionInfo.logs && transactionInfo.logs.length == 4 && (
+                        <>
+                          <br />
+                          <InfoLabel label="Swap Details" value={''} />
+                          <InfoLabel
+                            label="Input"
+                            value={
+                              parseFloat(formatUnits(transactionInfo.logs[1], 18)) +
+                              ' ' +
+                              currencies[Field.INPUT].symbol
+                            }
+                          />
+                          <InfoLabel
+                            label="Output"
+                            value={
+                              parseFloat(formatUnits(transactionInfo.logs[2], 18)) +
+                              '  ' +
+                              currencies[Field.OUTPUT].symbol
+                            }
+                          />
+                          <InfoLabel
+                            label="With Amount of Fees moved to Fees Pool"
+                            value={
+                              parseFloat(formatUnits(transactionInfo.logs[3], 18)) +
+                              ' ' +
+                              currencies[Field.INPUT].symbol
+                            }
+                          />
+                          <br />
+                          <InfoLabel label="NOTE" value={'\n Reload page to view updated balances'} />
+                        </>
+                      )}
+                      {transactionInfo.errorCode && <InfoLabel label="Error code" value={transactionInfo.errorCode} />}
+                      {transactionInfo.errorMessage && <InfoLabel label="Error message" value={transactionInfo.errorMessage} />}
+                      {transactionInfo.errorBody && <InfoLabel label="Error body" value={JSON.parse(transactionInfo.errorBody).error.message} />}
+                      {transactionInfo.revertReason && (
+                        <InfoLabel label="Revert reason" value={transactionInfo.revertReason} />
+                      )}
+                    </Text>
                   </RowBetween>
                 </AutoColumn>
               </ContentWrapper>

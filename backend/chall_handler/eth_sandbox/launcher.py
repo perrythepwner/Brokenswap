@@ -83,7 +83,7 @@ def new_launch_instance_action(
         player_acct = Account.from_mnemonic(mnemonic, account_path=f"m/44'/60'/0'/0/1")
 
         web3 = Web3(Web3.HTTPProvider(
-            f"http://127.0.0.1:{SRV_PORT}/{uuid}",
+            f"http://127.0.0.1:{SRV_PORT}/rpc/{uuid}",
             request_kwargs={
                 "headers": {
                     "Authorization": f"Bearer {get_shared_secret()}",
@@ -109,7 +109,7 @@ def new_launch_instance_action(
         connection_info = {
             "Team UUID": TEAM_UUID,
             "Player UUID": uuid,
-            "RPC URL": f"http://{PUBLIC_IP}:{SRV_PORT}/{uuid}",
+            "RPC URL": f"http://{PUBLIC_IP}:{SRV_PORT}/rpc/{uuid}",
             "Player Private Key": player_acct.privateKey.hex(),
             "Player Address": player_acct.address,
             "Setup Contract": setup_addr,
@@ -118,6 +118,17 @@ def new_launch_instance_action(
             "WETH Token Contract": weth_addr,
             "HTB Token Contract": htb_addr,
         }
+
+        with open('/tmp/constants/token-list.json', 'r') as f:
+            tokenList = json.load(f)
+            for token in tokenList['tokens']:
+                if token['symbol'] == 'HTB':
+                    token['address'] = connection_info['HTB Token Contract']
+                elif token['symbol'] == 'WETH':
+                    token['address'] = connection_info['WETH Token Contract']
+
+        with open('/tmp/constants/token-list.json', 'w') as f:
+            json.dump(tokenList, f, indent=4)
 
         with open(f"/tmp/connection-info-by-team/{TEAM_UUID}", "w") as f:
             json.dump(connection_info, f, indent=4)
@@ -174,7 +185,7 @@ def new_get_flag_action(
             print("team instance not found, launch a new instance first")
             return 1
 
-        web3 = Web3(Web3.HTTPProvider(f"http://127.0.0.1:{SRV_PORT}/{data['uuid']}"))
+        web3 = Web3(Web3.HTTPProvider(f"http://127.0.0.1:{SRV_PORT}/rpc/{data['uuid']}"))
 
         if not checker(web3, data['address']):
             print("are you sure you solved it?")
@@ -182,6 +193,9 @@ def new_get_flag_action(
 
         print(FLAG)
         print()
+        print("Did it seem spookily simple to you?")
+        print("Well, that was a simplified version of the 340 ETH (worth approximately $624,000 at the time) LeetSwap Hack that occurred on August 1, 2023.")
+        print("Congratulations, you could have been rich now 🎃")
         return 0
 
     return Action(name="get flag", handler=action)

@@ -204,7 +204,7 @@ def kill():
 
 ALLOWED_NAMESPACES = ["web3", "eth", "net"]
 
-@app.route("/<string:uuid>", methods=["POST"])
+@app.route("/rpc/<string:uuid>", methods=["POST"])
 @cross_origin()
 def proxy(uuid):
     body = request.get_json()

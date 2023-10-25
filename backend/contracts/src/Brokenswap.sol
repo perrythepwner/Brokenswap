@@ -16,12 +16,9 @@ contract Brokenswap {
     mapping(address => bool) public supportedTokens; // Mapping of supported tokens.
     
     event Swap(
-        address indexed user,
-        address indexed inputToken,
-        address indexed outputToken,
-        uint256 inputAmount,
-        uint256 outputAmount,
-        uint256 fees
+        uint256 indexed inputAmount,
+        uint256 indexed outputAmount,
+        uint256 indexed fees
     );
 
     /// @notice Constructor to initialize the Brokenswap contract.
@@ -69,7 +66,7 @@ contract Brokenswap {
         outToken.safeTransfer(msg.sender, _outputAmount);
         
         // Emit the Swap event to log the transaction.
-        emit Swap(msg.sender, inputToken, outputToken, inputAmount, _outputAmount, fees);
+        emit Swap(inputAmount, _outputAmount, fees);
         
         return true;
     }

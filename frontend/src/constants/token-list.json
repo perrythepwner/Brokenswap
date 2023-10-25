@@ -1,22 +1,21 @@
 {
     "name": "Brokenswap supported tokens list",
     "tokens": [
-      {
-        "chainId": 62,
-        "address": "0x1cF157a7A31E13c277bCfdf4E9d646e2ed008EeE",
-        "name": "HTB token",
-        "symbol": "HTB",
-        "decimals": 18,
-        "logoURI": "https://raw.githubusercontent.com/ubeswap/default-token-list/master/assets/asset_POOF.png"
-      },
-      {
-        "chainId": 62,
-        "address": "0x4d64a0D2Cb875A491D96ae03C0dc513AA5bEef39",
-        "name": "Wrapped Ethereum",
-        "symbol": "WETH",
-        "decimals": 18,
-        "logoURI": "https://raw.githubusercontent.com/ubeswap/default-token-list/master/assets/asset_POOF.png"
-      }
+        {
+            "chainId": 62,
+            "address": "0x8Be3a167C92D8977e191F32B9CF12a2dEd5B389A",
+            "name": "HTB token",
+            "symbol": "HTB",
+            "decimals": 18,
+            "logoURI": "/images/htb-token-logo.png"
+        },
+        {
+            "chainId": 62,
+            "address": "0x7529B1F40140868941A43D55Cb82978B3f4fFb4E",
+            "name": "Wrapped Ethereum",
+            "symbol": "WETH",
+            "decimals": 18,
+            "logoURI": "/images/weth-token-logo.png"
+        }
     ]
-  }
-  
+}
