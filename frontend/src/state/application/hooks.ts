@@ -1,5 +1,3 @@
-// @ts-nocheck
-import { useCelo } from '@celo/react-celo'
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -31,12 +29,6 @@ export function useOpenModal(modal: ApplicationModal): () => void {
 export function useCloseModals(): () => void {
   const dispatch = useDispatch<AppDispatch>()
   return useCallback(() => dispatch(setOpenModal(null)), [dispatch])
-}
-
-export function useWalletModalToggle(): () => void {
-  
-  const toggle = useToggleModal(ApplicationModal.WALLET)
-  return address === null ? connect : toggle
 }
 
 export function useToggleSettingsMenu(): () => void {

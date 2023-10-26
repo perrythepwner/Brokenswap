@@ -1,6 +1,5 @@
-import { useCelo } from '@celo/react-celo'
 import { JSBI, Pair, Percent, TokenAmount } from '@ubeswap/sdk'
-import { darken, transparentize } from 'polished'
+import { transparentize } from 'polished'
 import React, { useState } from 'react'
 import { ChevronDown, ChevronUp } from 'react-feather'
 import { Link } from 'react-router-dom'
@@ -11,10 +10,10 @@ import { BIG_INT_ZERO } from '../../constants'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { useColor } from '../../hooks/useColor'
 import { useTokenBalance } from '../../state/wallet/hooks'
-import { ExternalLink, TYPE } from '../../theme'
+import { TYPE } from '../../theme'
 import { currencyId } from '../../utils/currencyId'
-import { ButtonEmpty, ButtonPrimary, ButtonSecondary } from '../Button'
-import Card, { GreyCard, LightCard } from '../Card'
+import { ButtonEmpty, ButtonPrimary } from '../Button'
+import { GreyCard, LightCard } from '../Card'
 import { AutoColumn } from '../Column'
 import CurrencyLogo from '../CurrencyLogo'
 import DoubleCurrencyLogo from '../DoubleLogo'
@@ -26,12 +25,6 @@ export const FixedHeightRow = styled(RowBetween)`
   height: 24px;
 `
 
-export const HoverCard = styled(Card)`
-  border: 1px solid transparent;
-  :hover {
-    border: 1px solid ${({ theme }) => darken(0.06, theme.bg2)};
-  }
-`
 const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
   border: none;
   background: ${({ theme, bgColor }) =>

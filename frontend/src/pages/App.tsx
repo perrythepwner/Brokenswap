@@ -1,28 +1,14 @@
-// @ts-nocheck
-import { useCelo } from '@celo/react-celo'
 import { ErrorBoundary } from '@sentry/react'
 import React, { Suspense } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
-import { isBanned } from 'utils/isBannedUser'
 
 import Header from '../components/Header'
 import Popups from '../components/Popups'
-import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
-import Docs from './Docs'
-import Earn from './Earn'
-import Manage from './Earn/Manage'
-import ManageSingle from './Earn/ManageSingle'
-import Pool from './Pool'
-import PoolFinder from './PoolFinder'
-import RemoveLiquidity from './RemoveLiquidity'
-import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
-import Send from './Send'
-import { Stake } from './Stake'
-import AddProposal from './Stake/AddProposal'
-import Swap from './Swap'
-import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 import Connection from './Connection'
+import Docs from './Docs'
+import Swap from './Swap'
+import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -73,10 +59,6 @@ export default function App() {
             <Switch>
               <Route exact strict path="/swap" component={Swap} />
               <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
-              <Route exact strict path="/find" component={PoolFinder} />
-              <Route exact strict path="/pool" component={Pool} />
-              <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
-              <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
               <Route exact strict path="/docs" component={Docs} />
               <Route exact strict path="/connection" component={Connection} />
               <Route component={RedirectPathToSwapOnly} />

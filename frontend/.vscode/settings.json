@@ -2,7 +2,6 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cSpell.words": ["ALFAJORES", "Blockscout", "Identicon", "Valora", "celo", "ubeswap"],
   "search.exclude": {
     "**/.yarn": true,
     "**/.pnp.*": true

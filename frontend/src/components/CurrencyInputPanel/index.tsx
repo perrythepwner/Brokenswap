@@ -1,13 +1,10 @@
-import { ChainId, useCelo } from '@celo/react-celo'
+import { ChainId } from '@celo/react-celo'
 import { Pair, Token, TokenAmount } from '@ubeswap/sdk'
 import { darken } from 'polished'
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
-import useTheme from '../../hooks/useTheme'
-import { useCurrencyBalance } from '../../state/wallet/hooks'
-import { TYPE } from '../../theme'
 import CurrencyLogo from '../CurrencyLogo'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { Input as NumericalInput } from '../NumericalInput'
@@ -138,16 +135,10 @@ export default function CurrencyInputPanel({
   otherCurrency,
   id,
   showCommonBases,
-  customBalanceText,
   chainId,
-  balanceOverride,
   disabled = false,
 }: CurrencyInputPanelProps) {
   const [modalOpen, setModalOpen] = useState(false)
-
-  const userBalance = useCurrencyBalance(undefined, currency ?? undefined)
-  const selectedCurrencyBalance = balanceOverride ?? userBalance
-  const theme = useTheme()
 
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false)

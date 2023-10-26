@@ -1,4 +1,3 @@
-// @ts-nocheck
 import * as UbeswapDefaultList from '@ubeswap/default-token-list'
 import * as UbeswapExperimentalList from '@ubeswap/default-token-list/ubeswap-experimental.token-list.json'
 import { ChainId, Token } from '@ubeswap/sdk'
@@ -6,7 +5,6 @@ import Vibrant from 'node-vibrant'
 import { shade } from 'polished'
 import { useLayoutEffect, useState } from 'react'
 import { useTheme } from 'styled-components'
-import uriToHttp from 'utils/uriToHttp'
 import { hex } from 'wcag-contrast'
 
 const images: Record<string, string> = {}
@@ -42,20 +40,6 @@ async function getColorFromToken(token: Token): Promise<string | null> {
     .catch(() => null)
 }
 
-async function getColorFromUriPath(uri: string): Promise<string | null> {
-  const formattedPath = uriToHttp(uri)[0]
-
-  return Vibrant.from(formattedPath)
-    .getPalette()
-    .then((palette) => {
-      if (palette?.Vibrant) {
-        return palette.Vibrant.hex
-      }
-      return null
-    })
-    .catch(() => null)
-}
-
 export function useColor(token?: Token) {
   const theme = useTheme()
   const [color, setColor] = useState(theme.primary1)
@@ -76,29 +60,6 @@ export function useColor(token?: Token) {
       setColor('#2172E5')
     }
   }, [token])
-
-  return color
-}
-
-export function useListColor(listImageUri?: string) {
-  const [color, setColor] = useState('#2172E5')
-
-  useLayoutEffect(() => {
-    let stale = false
-
-    if (listImageUri) {
-      getColorFromUriPath(listImageUri).then((color) => {
-        if (!stale && color !== null) {
-          setColor(color)
-        }
-      })
-    }
-
-    return () => {
-      stale = true
-      setColor('#2172E5')
-    }
-  }, [listImageUri])
 
   return color
 }

@@ -36,6 +36,9 @@ module.exports = {
     'import/newline-after-import': 'warn',
     'import/no-duplicates': 'warn',
     'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-imports-ts': 'error',
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn',
   },
   env: {
     node: true,

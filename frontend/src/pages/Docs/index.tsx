@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Markdown from 'react-markdown'
-import AppBody from '../AppBody'
-import styled from 'styled-components'
 import rehypeRaw from 'rehype-raw'
+import styled from 'styled-components'
 
 export default function Docs() {
   const BodyWrapper = styled.div`

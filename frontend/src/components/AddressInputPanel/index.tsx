@@ -1,10 +1,8 @@
-import { useCelo } from '@celo/react-celo'
-import { ChainId } from '@ubeswap/sdk'
 import React, { useCallback, useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 
 import useENS from '../../hooks/useENS'
-import { ExternalLink, TYPE } from '../../theme'
+import { TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
 import { RowBetween } from '../Row'
 
@@ -77,8 +75,6 @@ export default function AddressInputPanel({
   // triggers whenever the typed value changes
   onChange: (value: string) => void
 }) {
-  
-  const chainId = 62
   const theme = useContext(ThemeContext)
 
   const { address, loading } = useENS(value)

@@ -1,25 +1,12 @@
-import { ChainId as UbeswapChainId, TokenAmount, Token } from '@ubeswap/sdk'
-import Loader from 'components/Loader'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { X } from 'react-feather'
-import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { relevantDigits } from 'utils/relevantDigits'
-import { useCUSDPrice } from 'utils/useCUSDPrice'
 
 import tokenLogo from '../../assets/images/token-logo.png'
-import { UBE } from '../../constants'
-import { useTotalSupply } from '../../data/TotalSupply'
-import { useTotalUbeEarned } from '../../state/stake/hooks'
-import { useAggregateUbeBalance, useTokenBalance } from '../../state/wallet/hooks'
-import { ExternalLink, StyledInternalLink, TYPE, UbeTokenAnimated } from '../../theme'
+import { BrokenswapTokenAnimated, TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
 import { Break, CardNoise, CardSection, DataCard } from '../earn/styled'
 import { RowBetween } from '../Row'
-import { useCirculatingSupply } from './useCirculatingSupply'
-import { useWeb3Provider } from 'hooks/useContract'
-import { useConnectionInfo } from 'hooks/useConnectionInfo'
-import { Wallet, ethers } from 'ethers'
 
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
@@ -51,16 +38,17 @@ export default function TokenBalanceContent({
   setShowTokenBalanceModal: any
   tokens: any
 }) {
-  const [connectionInfo, isInstanceRunning] = useConnectionInfo()
-  const provider = useWeb3Provider()
+  //  const [connectionInfo, isInstanceRunning] = useConnectionInfo()
+  //  const provider = useWeb3Provider()
 
-  function TokenAmount(token: Token) {
-    console.log('TokenAmount', token)
-    console.log('PV key', connectionInfo['Player Private Key'])
-    const wallet = new ethers.Wallet(connectionInfo['Player Private Key'], provider)
-    const TokenBalance = useTokenBalance(undefined, token)
-    return TokenBalance
-  }
+  //  function TokenAmount(token: Token) {
+  //    // @todo: fix this
+  //    console.log('TokenAmount', token)
+  //    console.log('PV key', connectionInfo['Player Private Key'])
+  //    const wallet = new ethers.Wallet(connectionInfo['Player Private Key'], provider)
+  //    const TokenBalance = useTokenBalance(undefined, token)
+  //    return TokenBalance
+  //  }
 
   return (
     <ContentWrapper gap="lg">
@@ -77,7 +65,7 @@ export default function TokenBalanceContent({
           <>
             <CardSection gap="sm">
               <AutoColumn gap="md" justify="center">
-                <UbeTokenAnimated width="48px" src={tokenLogo} />{' '}
+                <BrokenswapTokenAnimated width="48px" src={tokenLogo} />{' '}
                 <TYPE.white fontSize={48} fontWeight={600} color="white">
                   {'8'}
                 </TYPE.white>
@@ -85,11 +73,7 @@ export default function TokenBalanceContent({
               <AutoColumn gap="md">
                 <RowBetween>
                   <TYPE.white color="white">{'Balance'}:</TYPE.white>
-                  {
-                    <TYPE.white color="white">
-                      {TokenAmount(tokens[connectionInfo['HTB Token Address']])?.toFixed(2, { groupSeparator: ',' })}
-                    </TYPE.white>
-                  }
+                  {<TYPE.white color="white">{0}</TYPE.white>}
                 </RowBetween>
               </AutoColumn>
             </CardSection>

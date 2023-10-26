@@ -1,10 +1,8 @@
-import { useCelo } from '@celo/react-celo'
-import { ChainId, Token } from '@ubeswap/sdk'
+import { Token } from '@ubeswap/sdk'
 import { ButtonPrimary } from 'components/Button'
 import Card from 'components/Card'
 import { AutoColumn } from 'components/Column'
 import CurrencyLogo from 'components/CurrencyLogo'
-import ListLogo from 'components/ListLogo'
 import { AutoRow, RowBetween, RowFixed } from 'components/Row'
 import { SectionBreak } from 'components/swap/styleds'
 import useTheme from 'hooks/useTheme'
@@ -16,7 +14,6 @@ import { useAddUserToken } from 'state/user/hooks'
 import styled from 'styled-components'
 import { CloseIcon, TYPE } from 'theme'
 
-import { ExternalLink } from '../../theme/components'
 import { Checkbox, PaddedColumn } from './styleds'
 
 const Wrapper = styled.div`

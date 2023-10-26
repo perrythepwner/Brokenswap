@@ -8,7 +8,6 @@ import styled, {
   ThemeProvider as StyledComponentsThemeProvider,
 } from 'styled-components'
 
-import { useIsDarkMode } from '../state/user/hooks'
 import { Colors } from './styled'
 
 export * from './components'
@@ -55,11 +54,11 @@ export function colors(darkMode: boolean): Colors {
     bg4: darkMode ? '#565A69' : '#CED0D9',
     bg5: darkMode ? '#6C7284' : '#888D9B',
 
-    //specialty colors
+    // specialty colors
     modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
     advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
 
-    //primary colors
+    // primary colors
     primary1: darkMode ? '#8878C3' : '#8878C3',
     primary2: darkMode ? '#E3DFF3' : '#FF8CC3',
     primary3: darkMode ? '#BFB7DE' : '#FF99C9',
@@ -99,7 +98,7 @@ export function theme(darkMode: boolean): DefaultTheme {
       lg: 24,
     },
 
-    //shadows
+    // shadows
     shadow1: darkMode ? '#000' : '#2F80ED',
 
     // media queries
@@ -190,7 +189,7 @@ body {
 }
 
  a {
-   color: ${colors(false).blue1}; 
+   color: ${colors(false).blue1};
  }
 
 * {

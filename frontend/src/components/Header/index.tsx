@@ -1,42 +1,25 @@
 import 'rc-drawer/assets/index.css'
 
-import { ChainId, useCelo } from '@celo/react-celo'
-import { CELO, ChainId as UbeswapChainId, TokenAmount } from '@ubeswap/sdk'
 import { CardNoise } from 'components/earn/styled'
 import Modal from 'components/Modal'
-import Hamburger from 'hamburger-react'
-import usePrevious from 'hooks/usePrevious'
+import { useBalances } from 'hooks/useConnectionInfo'
 import { darken } from 'polished'
 import Drawer from 'rc-drawer'
-import React, { useEffect, useState } from 'react'
-import { Moon, Sun } from 'react-feather'
+import React, { useState } from 'react'
+import { Moon } from 'react-feather'
 import { NavLink } from 'react-router-dom'
 import { Text } from 'rebass'
 import styled from 'styled-components'
 import { TYPE } from 'theme'
-import { ExternalLink } from 'theme/components'
 import { CountUp } from 'use-count-up'
-import { relevantDigits } from 'utils/relevantDigits'
-import TokenBalanceContent from './TokenBalanceContent'
-import Icon from '../../assets/svg/icon-ube.svg'
-import Logo from '../../assets/svg/logo.svg'
-import LogoDark from '../../assets/svg/logo-dark.svg'
+
 import brokenswapIcon from '../../assets/images/brokenswap-icon.png'
 import brokenswapLogo from '../../assets/images/brokenswap-logo.png'
 import { useDarkModeManager } from '../../state/user/hooks'
-import { YellowCard } from '../Card'
-import Row, { RowFixed } from '../Row'
 import { CloseIcon } from '../../theme'
+import { YellowCard } from '../Card'
 import { AutoColumn } from '../Column'
-import { RowBetween } from '../Row'
-import { Field } from '../../state/swap/actions'
-import { useDerivedSwapInfo } from 'state/swap/hooks'
-import { useAllTokens } from 'hooks/Tokens'
-import { useTokenBalance } from 'state/wallet/hooks'
-import { useBalances, useConnectionInfo } from 'hooks/useConnectionInfo'
-import { ERC20_ABI } from 'constants/abis/erc20'
-import { Contract, Wallet } from 'ethers'
-import { useWeb3Provider } from 'hooks/useContract'
+import Row, { RowBetween, RowFixed } from '../Row'
 
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
@@ -236,37 +219,6 @@ export const StyledNavLinkExtraSmall = styled(StyledNavLink).attrs({
   }
 `
 
-const StyledExternalLink = styled(ExternalLink).attrs({
-  activeClassName,
-})<{ isActive?: boolean }>`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: left;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text2};
-  font-size: 1rem;
-  width: fit-content;
-  margin: 0 12px;
-  font-weight: 500;
-
-  &.${activeClassName} {
-    border-radius: 12px;
-    font-weight: 600;
-    color: ${({ theme }) => theme.text1};
-  }
-
-  :hover,
-  :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-      display: none;
-`}
-`
-
 export const StyledMenuButton = styled.button`
   position: relative;
   width: 100%;
@@ -360,36 +312,15 @@ export const StyledSubMenuItem = styled(StyledMenuItem)`
   padding-left: 30px;
 `
 
-const StyledDrawerExternalLink = styled(StyledExternalLink).attrs({
-  activeClassName,
-})<{ isActive?: boolean }>`
-  text-decoration: none;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-      display: flex;
-`}
-`
-
 export default function Header() {
-  const userCELOBalance = 0
   const [darkMode, toggleDarkMode] = useDarkModeManager()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showTokenBalanceModal, setShowTokenBalanceModal] = useState<boolean>(true)
 
   const [showMessageModal, setShowMessageModal] = useState(false)
   const openMessageModal = () => {
     setShowMessageModal(true)
   }
-
-  const [drawerVisible, setDrawerVisible] = useState<boolean>(false)
-
-  const onDrawerClose = () => {
-    setDrawerVisible(false)
-  }
-
-  const onToggle = (toggled: boolean) => {
-    setDrawerVisible(toggled)
-  }
-
-  const { parsedAmount, currencies } = useDerivedSwapInfo()
   const [HtbTokenBalance, WethTokenBalance] = useBalances()
 
   return (
@@ -408,19 +339,6 @@ export default function Header() {
           <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
             {'Swap'}
           </StyledNavLink>
-          <StyledNavLink
-            id={`pool-nav-link`}
-            to={'/pool'}
-            isActive={(match, { pathname }) =>
-              Boolean(match) ||
-              pathname.startsWith('/add') ||
-              pathname.startsWith('/remove') ||
-              pathname.startsWith('/create') ||
-              pathname.startsWith('/find')
-            }
-          >
-            {'Pool'}
-          </StyledNavLink>
           <StyledNavLink id={`docs-nav-link`} to={'/docs'}>
             {'Docs'}
           </StyledNavLink>
@@ -433,7 +351,7 @@ export default function Header() {
         <HeaderElement>TOKEN BALANCES:</HeaderElement>
         <HeaderElementWrap>
           <TokenWrapper onClick={() => setShowTokenBalanceModal(true)}>
-            <UBEAmount active={true} style={{ pointerEvents: 'auto' }}>
+            <TokenAmount active={true} style={{ pointerEvents: 'auto' }}>
               {true && (
                 <HideSmall>
                   <TYPE.white
@@ -452,13 +370,13 @@ export default function Header() {
                 </HideSmall>
               )}
               HTB
-            </UBEAmount>
+            </TokenAmount>
             <CardNoise />
           </TokenWrapper>
         </HeaderElementWrap>
         <HeaderElementWrap>
           <TokenWrapper onClick={() => setShowTokenBalanceModal(true)}>
-            <UBEAmount active={true} style={{ pointerEvents: 'auto' }}>
+            <TokenAmount active={true} style={{ pointerEvents: 'auto' }}>
               {true && (
                 <HideSmall>
                   <TYPE.white
@@ -477,7 +395,7 @@ export default function Header() {
                 </HideSmall>
               )}
               WETH
-            </UBEAmount>
+            </TokenAmount>
             <CardNoise />
           </TokenWrapper>
         </HeaderElementWrap>
@@ -503,7 +421,7 @@ export default function Header() {
   )
 }
 
-const UBEAmount = styled(AccountElement)`
+const TokenAmount = styled(AccountElement)`
   color: white;
   padding: 4px 8px;
   height: 36px;

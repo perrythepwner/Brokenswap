@@ -1,14 +1,9 @@
-
-// @ts-nocheck
-import { useCelo } from '@celo/react-celo'
-import { ChainId } from '@ubeswap/sdk'
 import React, { useContext } from 'react'
 import { AlertTriangle, ArrowUpCircle } from 'react-feather'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
 
 import Circle from '../../assets/images/blue-loader.svg'
-import { ExternalLink } from '../../theme'
 import { CloseIcon, CustomLightSpinner } from '../../theme/components'
 import { ButtonPrimary } from '../Button'
 import { AutoColumn, ColumnCenter } from '../Column'
@@ -61,17 +56,8 @@ function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () 
   )
 }
 
-function TransactionSubmittedContent({
-  onDismiss,
-  chainId,
-  hash,
-}: {
-  onDismiss: () => void
-  hash: string | undefined
-  chainId: ChainId
-}) {
+function TransactionSubmittedContent({ onDismiss }: { onDismiss: () => void; hash: string | undefined }) {
   const theme = useContext(ThemeContext)
-  
 
   return (
     <Wrapper>
@@ -164,18 +150,13 @@ export default function TransactionConfirmationModal({
   pendingText,
   content,
 }: ConfirmationModalProps) {
-  
-  const chainId = 62
-
-  if (!chainId) return null
-
   // confirmation screen
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90}>
       {attemptingTxn ? (
         <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} />
       ) : hash ? (
-        <TransactionSubmittedContent chainId={chainId} hash={hash} onDismiss={onDismiss} />
+        <TransactionSubmittedContent hash={hash} onDismiss={onDismiss} />
       ) : (
         content()
       )}

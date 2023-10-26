@@ -1,10 +1,10 @@
+import { formatUnits } from '@ethersproject/units'
+import { ERC20_ABI } from 'constants/abis/erc20'
 import { Contract, Wallet } from 'ethers'
 import { useEffect, useState } from 'react'
+
 import { useAllTokens } from './Tokens'
 import { useWeb3Provider } from './useContract'
-import { ERC20_ABI } from 'constants/abis/erc20'
-import { formatUnits } from '@ethersproject/units'
-import { set } from 'lodash'
 
 export function useConnectionInfo() {
   const [connectionInfo, setConnectionInfo] = useState([])
@@ -41,8 +41,8 @@ export function useBalances() {
   useEffect(() => {
     async function setBalances() {
       try {
-        const player_addr = connectionInfo['Player Address']
-        const signer = new Wallet(connectionInfo['Player Private Key'], provider)
+        const player_addr = connectionInfo['Player Address' as keyof typeof connectionInfo]
+        const signer = new Wallet(connectionInfo['Player Private Key' as keyof typeof connectionInfo], provider)
         const HtbContract = new Contract(Object.values(tokens)[0].address, ERC20_ABI, signer)
         const WethContract = new Contract(Object.values(tokens)[1].address, ERC20_ABI, signer)
         const HtbBalance = await HtbContract.balanceOf(player_addr)

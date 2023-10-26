@@ -1,5 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { useConnectionInfo } from 'hooks/useConnectionInfo'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 const BodyWrapper = styled.div`
@@ -27,7 +29,7 @@ const InfoLabel = ({ label, value }) => (
 )
 
 export default function Connection() {
-  const [connectionInfo, isInstanceRunning] = useConnectionInfo()
+  const [connectionInfo, setConnectionInfo] = useConnectionInfo()
   return (
     <BodyWrapper>
       <InfoLabel label="Team UUID" value={connectionInfo['Team UUID']} />

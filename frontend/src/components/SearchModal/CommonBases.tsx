@@ -4,7 +4,6 @@ import React from 'react'
 import { Text } from 'rebass'
 import styled from 'styled-components'
 
-import { SUGGESTED_BASES } from '../../constants'
 import { AutoColumn } from '../Column'
 import CurrencyLogo from '../CurrencyLogo'
 import QuestionHelper from '../QuestionHelper'
@@ -27,7 +26,6 @@ const BaseWrapper = styled.div<{ disable?: boolean }>`
 `
 
 export default function CommonBases({
-  chainId,
   onSelect,
   selectedCurrency,
 }: {
@@ -45,7 +43,7 @@ export default function CommonBases({
         <QuestionHelper text={'These tokens are commonly paired with other tokens.'} />
       </AutoRow>
       <AutoRow gap="4px">
-        {(chainId ? SUGGESTED_BASES[chainId] : []).map((token: Token) => {
+        {[].map((token: Token) => {
           const selected = selectedCurrency instanceof Token && selectedCurrency.address === token.address
           return (
             <BaseWrapper onClick={() => !selected && onSelect(token)} disable={selected} key={token.address}>

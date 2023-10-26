@@ -1,14 +1,9 @@
 import { getAddress } from '@ethersproject/address'
-import { BigNumber } from '@ethersproject/bignumber'
 import { AddressZero } from '@ethersproject/constants'
 import { Contract } from '@ethersproject/contracts'
-import { keccak256 } from '@ethersproject/keccak256'
-import { JsonRpcSigner } from '@ethersproject/providers'
+import { JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers'
 import { JSBI, Percent, Token, TokenAmount } from '@ubeswap/sdk'
-import { IUniswapV2Router02, UbeswapMoolaRouter } from 'generated/index'
-import { JsonRpcProvider } from '@ethersproject/providers'
-import IUniswapV2Router02ABI from '../constants/abis/IUniswapV2Router02.json'
-import UbeswapMoolaRouterABI from '../constants/abis/UbeswapMoolaRouter.json'
+
 import { TokenAddressMap } from '../state/lists/hooks'
 
 // returns the checksummed address if the address is valid, otherwise returns false
@@ -27,11 +22,6 @@ export function shortenAddress(address: string, chars = 4): string {
     throw Error(`Invalid 'address' parameter '${address}'.`)
   }
   return `${parsed.substring(0, chars + 2)}...${parsed.substring(42 - chars)}`
-}
-
-// add 100%
-export function calculateGasMargin(value: BigNumber): BigNumber {
-  return value.mul(BigNumber.from(2))
 }
 
 // converts a basis points value to a sdk percent
@@ -68,24 +58,10 @@ export function getContract(address: string, ABI: any, library: JsonRpcProvider,
   return new Contract(address, ABI, getProviderOrSigner(library, account) as any)
 }
 
-// account is optional
-export function getRouterContract(_: number, library: JsonRpcProvider, account?: string): IUniswapV2Router02 {
-  return getContract(ROUTER_ADDRESS, IUniswapV2Router02ABI, library, account) as IUniswapV2Router02
-}
-
-export function getMoolaRouterContract(_: number, library: JsonRpcProvider, account?: string): UbeswapMoolaRouter {
-  return getContract(UBESWAP_MOOLA_ROUTER_ADDRESS, UbeswapMoolaRouterABI, library, account) as UbeswapMoolaRouter
-}
-
 export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 }
 
 export function isTokenOnList(defaultTokens: TokenAddressMap, currency?: Token): boolean {
   return Boolean(currency instanceof Token && defaultTokens[currency.chainId]?.[currency.address])
-}
-
-export function isBTest(address: string): boolean {
-  const TARGET_HASH = process.env.REACT_APP_AB_HASH
-  return keccak256(address.toLowerCase()) === TARGET_HASH
 }

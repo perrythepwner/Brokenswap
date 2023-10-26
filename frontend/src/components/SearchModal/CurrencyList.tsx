@@ -1,22 +1,19 @@
-import { useCelo } from '@celo/react-celo'
-import { currencyEquals, Token, TokenAmount } from '@ubeswap/sdk'
+import { Token, TokenAmount } from '@ubeswap/sdk'
 import React, { CSSProperties, MutableRefObject, useCallback } from 'react'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import styled from 'styled-components'
 
-import { useAllInactiveTokens, useIsUserAddedToken } from '../../hooks/Tokens'
-import { useCombinedActiveList, WrappedTokenInfo } from '../../state/lists/hooks'
+import { useAllInactiveTokens } from '../../hooks/Tokens'
+import { useCombinedActiveList } from '../../state/lists/hooks'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 import { TYPE } from '../../theme'
 import { isTokenOnList } from '../../utils'
 import Column from '../Column'
 import CurrencyLogo from '../CurrencyLogo'
-import Loader from '../Loader'
 import { RowFixed } from '../Row'
-import { MouseoverTooltip } from '../Tooltip'
-import { MenuItem } from './styleds'
 import ImportRow from './ImportRow'
+import { MenuItem } from './styleds'
 
 function currencyKey(currency: Token): string {
   return currency instanceof Token ? currency.address : ''
@@ -29,28 +26,10 @@ const StyledBalanceText = styled(Text)`
   text-overflow: ellipsis;
 `
 
-const Tag = styled.div`
-  background-color: ${({ theme }) => theme.bg3};
-  color: ${({ theme }) => theme.text2};
-  font-size: 14px;
-  border-radius: 4px;
-  padding: 0.25rem 0.3rem 0.25rem 0.3rem;
-  max-width: 6rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  justify-self: flex-end;
-  margin-right: 4px;
-`
-
 function Balance({ balance }: { balance: TokenAmount }) {
   return <StyledBalanceText title={balance.toExact()}>{balance.toSignificant(4)}</StyledBalanceText>
 }
 
-const TagContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-`
 function CurrencyRow({
   currency,
   onSelect,

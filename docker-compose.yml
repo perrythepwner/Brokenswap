@@ -32,14 +32,12 @@ services:
     image: blockchain_${NAME}_frontend:latest
     container_name: blockchain_${NAME}_frontend
     volumes:
-     - ./frontend/:/app/:rw
      - shared-connection-info:/app/public/connection-info-by-team/:rw
-     - ./frontend/src/constants/token-list.json:/app/src/constants/token-list.json:ro
+     - ./frontend/src/constants/token-list.json:/app/src/constants/token-list.json:rw
     environment:
       - HTTP_PORT=${HTTP_PORT}
       - REACT_APP_NAME=${NAME}
       - REACT_APP_SRV_PORT=${SRV_PORT}
-      #- RPC_URL=http://${PUBLIC_IP}:${SRV_PORT}/${TEAM_UUID}
       - REACT_APP_RPC_ENDPOINT=${TEAM_UUID}
     entrypoint: yarn start
     ports:

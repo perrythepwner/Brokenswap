@@ -4,10 +4,9 @@ import { ArrowLeft } from 'react-feather'
 import { useDispatch } from 'react-redux'
 import { Link as HistoryLink, NavLink } from 'react-router-dom'
 import { AppDispatch } from 'state'
-import { resetMintState } from 'state/mint/actions'
 import styled from 'styled-components'
 
-import Row, { RowBetween } from '../Row'
+import { RowBetween } from '../Row'
 // import QuestionHelper from '../QuestionHelper'
 import Settings from '../Settings'
 
@@ -55,11 +54,6 @@ const StyledArrowLeft = styled(ArrowLeft)`
   color: ${({ theme }) => theme.text1};
 `
 
-const AbsoluteHistoryLink = styled(HistoryLink)`
-  position: absolute;
-  left: 1rem;
-`
-
 export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' }) {
   return (
     <Tabs style={{ marginBottom: '20px', display: 'none' }}>
@@ -97,7 +91,7 @@ export function AddRemoveTabs({ adding, creating }: { adding: boolean; creating:
         <HistoryLink
           to="/pool"
           onClick={() => {
-            adding && dispatch(resetMintState())
+            adding
           }}
         >
           <StyledArrowLeft />
@@ -107,21 +101,6 @@ export function AddRemoveTabs({ adding, creating }: { adding: boolean; creating:
         </ActiveText>
         <Settings />
       </RowBetween>
-    </Tabs>
-  )
-}
-
-export function ProposalTabs() {
-  return (
-    <Tabs>
-      <Row padding={'1rem 1rem 0 1rem'}>
-        <Row justify={'center'}>
-          <AbsoluteHistoryLink to="/stake">
-            <StyledArrowLeft />
-          </AbsoluteHistoryLink>
-          <ActiveText>Create Proposal</ActiveText>{' '}
-        </Row>
-      </Row>
     </Tabs>
   )
 }

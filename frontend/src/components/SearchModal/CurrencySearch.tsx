@@ -1,23 +1,20 @@
-// @ts-nocheck
-
 import { ChainId } from '@celo/react-celo'
 import { ChainId as UbeswapChainId, cUSD, Token } from '@ubeswap/sdk'
-import { ButtonLight } from 'components/Button'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import useTheme from 'hooks/useTheme'
 import useToggle from 'hooks/useToggle'
 import React, { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Edit } from 'react-feather'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import styled from 'styled-components'
 
 import { useAllTokens, useFoundOnInactiveList, useIsUserAddedToken, useToken } from '../../hooks/Tokens'
-import { ButtonText, CloseIcon, IconWrapper, TYPE } from '../../theme'
+import { CloseIcon, TYPE } from '../../theme'
 import { isAddress } from '../../utils'
+import { ButtonLight } from '../Button'
 import Column from '../Column'
-import Row, { RowBetween, RowFixed } from '../Row'
+import Row, { RowBetween } from '../Row'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 import { filterTokens } from './filtering'
@@ -29,16 +26,6 @@ const ContentWrapper = styled(Column)`
   width: 100%;
   flex: 1 1;
   position: relative;
-`
-
-const Footer = styled.div`
-  width: 100%;
-  border-radius: 20px;
-  padding: 20px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  background-color: ${({ theme }) => theme.bg1};
-  border-top: 1px solid ${({ theme }) => theme.bg2};
 `
 
 interface CurrencySearchProps {
@@ -61,7 +48,6 @@ export function CurrencySearch({
   showCommonBases,
   onDismiss,
   isOpen,
-  showManageView,
   showImportView,
   setImportToken,
   chainId = ChainId.Mainnet,
@@ -74,29 +60,7 @@ export function CurrencySearch({
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [invertSearchOrder] = useState<boolean>(false)
 
-  const allTokens = useAllTokens(chainId)
-
-  //const wethToken = new Token(
-  //  1,
-  //  '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // @TO-DO: Replace with the actual token address
-  //  18,
-  //  'WETH',
-  //  'Wrapped Ether'
-  //)
-
-  // Define "htb" token
-  //  const htbToken = new Token(
-  //    1,
-  //    '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // @TO-DO: Replace with the actual token address
-  //    18,
-  //    'HTB',
-  //    'HTB token'
-  //  )
-  //
-  //  // Create an array of the custom token objects
-  //  const customTokenList: Token[] = [htbToken]
-  //  const allTokens = customTokenList
-  // const inactiveTokens: Token[] | undefined = useFoundOnInactiveList(searchQuery)
+  const allTokens = useAllTokens()
 
   // if they input an address, use it
   const searchToken = useToken(searchQuery)
@@ -222,13 +186,7 @@ export function CurrencySearch({
             onKeyDown={handleEnter}
           />
         </Row>
-        {showCommonBases && (
-          <CommonBases
-            chainId={chainId as unknown as UbeswapChainId}
-            onSelect={handleCurrencySelect}
-            selectedCurrency={selectedCurrency}
-          />
-        )}
+        {showCommonBases && <CommonBases onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />}
       </PaddedColumn>
       <Separator />
       {searchToken && !searchTokenIsAdded ? (
@@ -238,7 +196,7 @@ export function CurrencySearch({
       ) : filteredSortedTokens?.length > 0 || (showExpanded && inactiveTokens && inactiveTokens.length > 0) ? (
         <div style={{ flex: '1' }}>
           <AutoSizer disableWidth>
-            {({ height }) => (
+            {({ height }: { height: number }) => (
               <CurrencyList
                 height={height}
                 showETH={showETH}

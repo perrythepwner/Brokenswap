@@ -1,6 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
 
-import { DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { updateVersion } from '../global/actions'
 import {
   addSerializedPair,
@@ -84,8 +83,8 @@ export const initialState: UserState = {
   userMinApprove: false,
   userAllowMoolaWithdrawal: false,
   userDisableSmartRouting: false,
-  userSlippageTolerance: INITIAL_ALLOWED_SLIPPAGE,
-  userDeadline: DEFAULT_DEADLINE_FROM_NOW,
+  userSlippageTolerance: 0,
+  userDeadline: 0,
   tokens: {},
   pairs: {},
   timestamp: currentTimestamp(),
@@ -100,13 +99,13 @@ export default createReducer(initialState, (builder) =>
       // slippage isnt being tracked in local storage, reset to default
       // noinspection SuspiciousTypeOfGuard
       if (typeof state.userSlippageTolerance !== 'number') {
-        state.userSlippageTolerance = INITIAL_ALLOWED_SLIPPAGE
+        state.userSlippageTolerance = 0
       }
 
       // deadline isnt being tracked in local storage, reset to default
       // noinspection SuspiciousTypeOfGuard
       if (typeof state.userDeadline !== 'number') {
-        state.userDeadline = DEFAULT_DEADLINE_FROM_NOW
+        state.userDeadline = 0
       }
 
       state.lastUpdateVersionTimestamp = currentTimestamp()

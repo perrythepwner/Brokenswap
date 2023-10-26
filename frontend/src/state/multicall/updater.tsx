@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { useCelo } from '@celo/react-celo'
 import { Contract } from '@ethersproject/contracts'
 import { useEffect, useMemo, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -119,7 +118,7 @@ export default function Updater(): null {
   // wait for listeners to settle before triggering updates
   const debouncedListeners = useDebounce(state.callListeners, 100)
   const latestBlockNumber = useBlockNumber()
-  
+
   const chainId = 62
   const cancellations = useRef<{ blockNumber: number; cancellations: (() => void)[] }>()
 

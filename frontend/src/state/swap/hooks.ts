@@ -1,20 +1,13 @@
-// @ts-nocheck
-import { useCelo } from '@celo/react-celo'
 import { parseUnits } from '@ethersproject/units'
-import { CELO, cEUR, ChainId as UbeswapChainId, cUSD, JSBI, Token, TokenAmount, Trade } from '@ubeswap/sdk'
+import { ChainId as UbeswapChainId, cUSD, JSBI, Token, TokenAmount } from '@ubeswap/sdk'
 import { ParsedQs } from 'qs'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { useCurrency } from '../../hooks/Tokens'
-import useENS from '../../hooks/useENS'
-import useParsedQueryString from '../../hooks/useParsedQueryString'
 import { isAddress } from '../../utils'
-import { computeSlippageAdjustedAmounts } from '../../utils/prices'
 import { AppDispatch, AppState } from '../index'
-import { useUserSlippageTolerance } from '../user/hooks'
-import { useCurrencyBalances } from '../wallet/hooks'
-import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
+import { Field, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
 import { SwapState } from './reducer'
 
 export function useSwapState(): AppState['swap'] {
@@ -87,69 +80,29 @@ export function tryParseAmount(value?: string, currency?: Token): TokenAmount | 
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedSwapInfo(): {
   currencies: { [field in Field]?: Token }
-  currencyBalances: { [field in Field]?: TokenAmount }
   parsedAmount: TokenAmount | undefined
-  v2Trade: undefined
-  inputError?: string
-  showRamp: boolean
 } {
   const {
     independentField,
     typedValue,
     [Field.INPUT]: { currencyId: inputCurrencyId },
     [Field.OUTPUT]: { currencyId: outputCurrencyId },
-    recipient,
   } = useSwapState()
 
   const inputCurrency = useCurrency(inputCurrencyId)
   const outputCurrency = useCurrency(outputCurrencyId)
-  const recipientLookup = useENS(recipient ?? undefined)
-  const to: string | null = null
-
-  const relevantTokenBalances = useCurrencyBalances(undefined, [
-    inputCurrency ?? undefined,
-    outputCurrency ?? undefined,
-  ])
 
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
-
-  //const minimaBestTradeExactIn = useMinimaTrade(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  //const ubeBestTradeExactIn = useUbeswapTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  //const bestTradeExactIn =
-  //  minimaBestTradeExactIn === undefined ? undefined : minimaBestTradeExactIn ?? ubeBestTradeExactIn
-  //const bestTradeExactOut = useUbeswapTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
-
-  //const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
-  const currencyBalances = {
-    [Field.INPUT]: relevantTokenBalances[0],
-    [Field.OUTPUT]: relevantTokenBalances[1],
-  }
 
   const currencies: { [field in Field]?: Token } = {
     [Field.INPUT]: inputCurrency ?? undefined,
     [Field.OUTPUT]: outputCurrency ?? undefined,
   }
 
-  let inputError: string | undefined
-
-  if (!parsedAmount) {
-    inputError = inputError ?? 'Enter an amount'
-  }
-
-  if (!currencies[Field.INPUT] || !currencies[Field.OUTPUT]) {
-    inputError = inputError ?? 'Select a token'
-  }
-
-  const showRamp = false
-
   return {
     currencies,
-    currencyBalances,
     parsedAmount,
-    undefined,
-    showRamp,
-    inputError,
   }
 }
 
@@ -206,36 +159,4 @@ export function queryParametersToSwapState(parsedQs: ParsedQs, chainId: UbeswapC
     independentField: parseIndependentFieldURLParameter(parsedQs.exactField),
     recipient,
   }
-}
-
-// updates the swap state to use the defaults for a given network
-export function useDefaultsFromURLSearch():
-  | { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined }
-  | undefined {
-  const chainId = 62
-  const dispatch = useDispatch<AppDispatch>()
-  const parsedQs = useParsedQueryString()
-  const [result, setResult] = useState<
-    { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined } | undefined
-  >()
-
-  useEffect(() => {
-    if (!chainId) return
-    const parsed = queryParametersToSwapState(parsedQs, chainId)
-
-    dispatch(
-      replaceSwapState({
-        typedValue: parsed.typedValue,
-        field: parsed.independentField,
-        inputCurrencyId: parsed[Field.INPUT].currencyId,
-        outputCurrencyId: parsed[Field.OUTPUT].currencyId,
-        recipient: parsed.recipient,
-      })
-    )
-
-    setResult({ inputCurrencyId: parsed[Field.INPUT].currencyId, outputCurrencyId: parsed[Field.OUTPUT].currencyId })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, chainId])
-
-  return result
 }

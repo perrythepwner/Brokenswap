@@ -25,8 +25,5 @@ export const TopSection = styled(AutoColumn)`
   width: 100%;
   margin-bottom: 24px;
 `
-export const TopSectionLimitOrder = styled(TopSection)`
-  max-width: 420px;
-`
 
 export default Column

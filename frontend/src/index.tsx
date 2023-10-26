@@ -3,12 +3,12 @@ import './index.css'
 
 import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
-import ReactGA from 'react-ga'
-import { HashRouter } from 'react-router-dom'
-import App from './pages/App'
-import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from './theme'
 import { Provider } from 'react-redux'
+import { HashRouter } from 'react-router-dom'
+
+import App from './pages/App'
 import store from './state'
+import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from './theme'
 
 ReactDOM.render(
   <StrictMode>

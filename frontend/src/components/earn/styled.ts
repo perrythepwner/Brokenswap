@@ -1,8 +1,5 @@
 import styled from 'styled-components'
 
-import uImage from '../../assets/images/big_unicorn.png'
-import noise from '../../assets/images/noise.webp'
-import xlUnicorn from '../../assets/images/xl_uni.png'
 import { AutoColumn } from '../Column'
 
 export const TextBox = styled.div`
@@ -29,7 +26,7 @@ export const DataCard = styled(AutoColumn)<{ disabled?: boolean }>`
 `
 
 export const CardBGImage = styled.span<{ desaturate?: boolean }>`
-  background: url(${uImage});
+  background: url();
   width: 1000px;
   height: 600px;
   position: absolute;
@@ -44,7 +41,7 @@ export const CardBGImage = styled.span<{ desaturate?: boolean }>`
 `
 
 export const CardBGImageSmaller = styled.span<{ desaturate?: boolean }>`
-  background: url(${xlUnicorn});
+  background: url();
   width: 1200px;
   height: 1200px;
   position: absolute;
@@ -58,7 +55,7 @@ export const CardBGImageSmaller = styled.span<{ desaturate?: boolean }>`
 `
 
 export const CardNoise = styled.span`
-  background: url(${noise});
+  background: url();
   background-size: cover;
   mix-blend-mode: overlay;
   border-radius: 12px;

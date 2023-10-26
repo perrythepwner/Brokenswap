@@ -1,5 +1,4 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { getVersionUpgrade, VersionUpgrade } from '@uniswap/token-lists'
 import { TokenList } from '@uniswap/token-lists/dist/types'
 
 import { DEFAULT_LIST_OF_LISTS } from '../../constants/lists'
@@ -52,8 +51,8 @@ export default createReducer(initialState, (builder) =>
       const pendingUpdate = state.byUrl[url]?.pendingUpdate ? state.byUrl[url]?.pendingUpdate : null
       state.byUrl[url] = {
         ...state.byUrl[url],
-        current: current,
-        pendingUpdate: pendingUpdate,
+        current,
+        pendingUpdate,
         loadingRequestId: requestId,
         error: null,
       }
@@ -69,16 +68,11 @@ export default createReducer(initialState, (builder) =>
             ...state.byUrl[url],
             loadingRequestId: null,
             error: null,
-            current: current,
+            current,
             pendingUpdate: tokenList,
           }
         }
       } else {
-        // activate if on default active
-        if (DEFAULT_ACTIVE_LIST_URLS.includes(url)) {
-          state.activeListUrls?.push(url)
-        }
-
         state.byUrl[url] = {
           ...state.byUrl[url],
           loadingRequestId: null,

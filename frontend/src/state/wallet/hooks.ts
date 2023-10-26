@@ -1,6 +1,4 @@
-import { useCelo } from '@celo/react-celo'
-import { ChainId as UbeswapChainId, JSBI, Token, TokenAmount } from '@ubeswap/sdk'
-import { UBE } from 'constants/tokens'
+import { JSBI, Token, TokenAmount } from '@ubeswap/sdk'
 import { useMemo } from 'react'
 
 import ERC20_INTERFACE from '../../constants/abis/erc20'
@@ -85,20 +83,4 @@ export function useAllTokenBalances(): { [tokenAddress: string]: TokenAmount | u
   const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens])
   const balances = useTokenBalances(undefined, allTokensArray)
   return balances ?? {}
-}
-
-// get the total owned, unclaimed, and unharvested UBE for account
-export function useAggregateUbeBalance(): TokenAmount | undefined {
-  const {
-    address,
-    network: { chainId },
-  } = useCelo()
-
-  const ube = chainId ? UBE[chainId as unknown as UbeswapChainId] : undefined
-
-  const ubeBalance: TokenAmount | undefined = useTokenBalance(address ?? undefined, ube)
-
-  if (!ube) return undefined
-
-  return ubeBalance
 }

@@ -24,7 +24,6 @@ FLAG = os.getenv("FLAG", "HTB{placeholder}")
 
 Account.enable_unaudited_hdwallet_features()
 
-
 @dataclass
 class Action:
     name: str
@@ -101,7 +100,8 @@ def new_launch_instance_action(
                     {
                         "uuid": uuid,
                         "mnemonic": mnemonic,
-                        "address": setup_addr,
+                        "player": player_acct.address,
+                        "setup": setup_addr,
                     }
                 )
             )
@@ -164,10 +164,11 @@ def new_kill_instance_action():
 
     return Action(name="kill instance", handler=action)
 
-def is_solved_checker(web3: Web3, addr: str) -> bool:
+def is_solved_checker(web3: Web3, player: str, setup: str) -> bool:
     result = web3.eth.call(
         {
-            "to": addr,
+            "from": player,
+            "to": setup,
             "data": web3.sha3(text="isSolved()")[:4],
         }
     )
@@ -187,7 +188,7 @@ def new_get_flag_action(
 
         web3 = Web3(Web3.HTTPProvider(f"http://127.0.0.1:{SRV_PORT}/rpc/{data['uuid']}"))
 
-        if not checker(web3, data['address']):
+        if not checker(web3, data['player'], data['setup']):
             print("are you sure you solved it?")
             return 1
 
@@ -205,11 +206,12 @@ def run_launcher(actions: List[Action]):
     for i, action in enumerate(actions):
         print(f"{i+1} - {action.name}")
 
-    action = int(input("action? ")) - 1
-    if action < 0 or action >= len(actions):
+    action = input("action? ")
+    # or action not a number
+    if not action.isdigit() or int(action) < 0 or int(action) > len(actions):
         print("can you not")
         exit(1)
 
-    exit(actions[action].handler())
+    exit(actions[int(action)-1].handler())
 
 # to-do: handle exceptions

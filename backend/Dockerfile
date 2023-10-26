@@ -15,6 +15,8 @@ RUN true \
     && rm -rf /tmp/contracts \
     && true
 
+RUN mkdir -p /tmp/constants  && chmod 777 /tmp/constants
+
 # setup and deploy challenge handler
 ENV PYTHONPATH /usr/lib/python
 
