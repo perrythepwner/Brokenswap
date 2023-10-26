@@ -1,6 +1,7 @@
 ![img](./assets/hacktheboo_banner.jpg)
 
 # Brokenswap
+![](./assets/brokenswap-logo.png)
 _"people said i was broke so i funded Brokenswap"_
 
 > Date: 26<sup>th</sup> October 2023 \
@@ -32,16 +33,16 @@ Can you prove otherwise?
 
 ## Challenge background
 
-In the wild world of DeFi, with an ever-increasing number of users, protocols, circulating liquidity, security has become more important than ever.
+In the wild world of DeFi, with an ever-increasing number of users, protocols, circulating liquidity, security has become more important than ever.  
 Sometimes, indeed often, people and developers tend to make trivial mistakes.  
 It happens.
 After all, we all are human.  
 But for this reason it becomes essential to have the code audited several times and by different sources before deploying it.  
 And if someone don't have sufficient funds, they can always resort to using well-known and well-audited external libraries.
 
-This real-world challenge takes inspiration from the recent **LeetSwap hack** that occurred on August 1, 2023 causing a **loss of 340 ETH (approximately $624,000 at the time) due to an Access Control vulnerability** in the `_transferFeesSupportingTaxTokens()` function which was intended to be an `internal` function (note the trailing underscore) but was `public` modifier incorrectly assigned. Read more [here](https://medium.com/coinmonks/leetswap-hack-analysis-81323527b3f7).
-An oversight worth more than half a million dollars.
-Players in this challenge will go through all the basic concepts of the functioning of Smart contracts, ERC 20, DEXes, Constant Product Formula etc, thanks to the documentation provided in the frontend of the challenge.
+This real-world challenge takes inspiration from the recent **LeetSwap hack** that occurred on August 1, 2023 causing a **loss of 340 ETH (approximately $624,000 at the time) due to an Access Control vulnerability** in the `_transferFeesSupportingTaxTokens()` function which was intended to be an `internal` function (note the trailing underscore) but was `public` modifier incorrectly assigned. Read more [here](https://medium.com/coinmonks/leetswap-hack-analysis-81323527b3f7).  
+An oversight worth more than half a million dollars.  
+Players in this challenge will go through all the basic concepts of the functioning of Smart contracts, ERC 20, DEXes, Constant Product Formula etc, thanks to the documentation provided in the frontend of the challenge.  
 Then, once assimilated the concepts (considering that the target audience is beginner-level) and understood what an interesting attack vector could be - e.g. causing an imbalance in the liquidity pool - they'll solve the challenge by exploiting the public (rather than internal) function `_moveAmountToFeesPool()`.
 
 ## Challenge scenario
@@ -263,11 +264,11 @@ The Openzeppelin libraries were used, probably the most secure and most used in 
 
 Once we read the documentation we therefore understood that:
 1) To allow the correct functioning of the DEX, according to the Constant Product Formula, the **INVARIANT**, i.e. the product of the quantity of tokens must remain, in fact, invariant.
-2) The price (y) of token B is simply given by `y = k/x` where:
+2) The price of token B is simply given by `y = k/x` where:
    - `x` represents the amount of TokenA in the Liquidity Pool.
    - `y` represents the amount of TokenB in the Liquidity Pool.
    - `k` is the constant value determined when liquidity is initially added.
-     And vice versa.
+    And vice versa.
 3) The curve representing this function allows us to visualize how the quantity of tokens in the pool will never end, providing infinite liquidity to the protocol. This is due to the fact that the curve never intersects with the axes that represent the balance of tokens in the pool.
 
 > *For a quantity of Token A that approaches 0, the quantity of Token B **MUST** approach infinity. This "MUST" imperative consequently dictates the price at each swap. According to the law of demand and supply, the more an asset becomes scarce, the more its value increases.*
@@ -279,7 +280,7 @@ Once we read the documentation we therefore understood that:
 How can we do it?
 In the source code of `Brokenswap.sol` you can see how there is a function, with a naming convention different from the others. That is, the function `_moveAmountToFeesPool()`:
 
-![](_moveAmountToFeesPool.png)
+![](./assets/_moveAmountToFeesPool.png)
 
 In fact, as the function's NatSpec describes, `_moveAmountToFeesPool()` is meant to be an **Internal** function. However, notice how it actually has the `public` modifier!
 
@@ -289,11 +290,11 @@ With this informations - having no other options - we can understand that:
 ## Exploitation
 
 0) Starting balance:
-![WETH balance before the attack](weth_balance_before_hack.png)
+![WETH balance before the attack](./assets/weth_balance_before_hack.png)
 
 1) We need to gain WETH tokens. To make them gain value, firstly we need to swap some of them in HTB token.
 ![Initializating the WETH/HTB swap](./assets/weth-htb_swap.png)
-![Finalizing the WETH/HTB swap](weth-htb_swap_successfull.png)
+![Finalizing the WETH/HTB swap](./assets/weth-htb_swap_successfull.png)
 ![WETH balance after swap](./assets/weth_balance_after_swap.png)
 
 2) Exploiting the Liquidity Pool by calling the `_moveAmountToFeesPool()` with arbitrary amount of tokens to move to arbitrary location. For demonstration we'll get out of the Liquidity Pool 498 of the remaining HTB tokens, meaning that it'll become extremely scarce and our ~2 HTB token swapped previously extremely valuable.
@@ -305,7 +306,7 @@ cast send $BROKENSWAP_ADDRESS "_moveAmountToFeesPool(address,uint256)" $HTB_TOKE
 ![Finalizing the HTB/WETH swap](./assets/htb-weth_swap_successfull.png)
 
 4) We now have (way) more WETH balance than before:
-![WETH balance after the attack](weth_balance_after_hack.png)
+![WETH balance after the attack](./assets/weth_balance_after_hack.png)
 
 5) Get the flag (who cares of the WETHs)
 ![attack](./assets/flag.png)

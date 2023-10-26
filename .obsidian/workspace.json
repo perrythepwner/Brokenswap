@@ -149,6 +149,7 @@
   },
   "active": "dff7ce65da54a3b4",
   "lastOpenFiles": [
+    "assets/brokenswap-logo.png",
     "release/WETH9.sol",
     "release/Setup.sol",
     "release/HTBtoken.sol",
@@ -169,7 +170,6 @@
     "frontend/src/generated/factories/index.ts",
     "frontend/src/generated/factories/Erc20_bytes32__factory.ts",
     "frontend/src/generated/factories/Erc20__factory.ts",
-    "frontend/src/generated/factories/Brokenswap__factory.ts",
     "frontend/node_modules/@celo/wallet-local/node_modules/web3-core/node_modules/@types/bn.js/node_modules/@types/node/README.md",
     "frontend/node_modules/@celo/contractkit/node_modules/web3-core/node_modules/@types/bn.js/node_modules/@types/node/README.md",
     "frontend/node_modules/webpack-dev-server/node_modules/wrap-ansi/node_modules/ansi-regex/readme.md",

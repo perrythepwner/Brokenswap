@@ -213,5 +213,3 @@ def run_launcher(actions: List[Action]):
         exit(1)
 
     exit(actions[int(action)-1].handler())
-
-# to-do: handle exceptions

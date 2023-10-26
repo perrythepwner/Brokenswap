@@ -25,7 +25,6 @@ import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '../../s
 import { CloseIcon, LinkStyledButton } from '../../theme'
 import AppBody from '../AppBody'
 
-// to-do: move to /abis/
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
   flex: 1 1;
