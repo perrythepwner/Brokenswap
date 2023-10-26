@@ -1,6 +1,6 @@
 ![img](./assets/hacktheboo_banner.jpg)
 
-<font size='10'>Brokenswap</font>
+# Brokenswap
 _"people said i was broke so i funded Brokenswap"_
 
 > Date: 26<sup>th</sup> October 2023 \
@@ -51,27 +51,30 @@ Then, once assimilated the concepts (considering that the target audience is beg
 There are `swap`, `docs` and `connection` routes in the frontend. Players also have the Challenge Handler and the source code of the Smart Contracts available.
 
 ### Docs
+
 ![Documentation page](./assets/docs.png)
 On this page players will have all the necessary information and concepts to solve the challenge, in case they don't know them.
 This is done to provide a clear path to the player, without risking ending up in long searches or unnecessary rabbit holes.
 Furthermore key aspects are highlighted, to give some hints:
+
 ![](./assets/highlighted_key_aspect.png)
 
 ### Swap
 
 ![Swap page](./assets/swap.png)
-
 This is the page where you can swap and see the token balances.
 
 > **_NOTE:_** 
 > This UI is working and was made to make the challenge less abstract and/or insidious. However, with only frontend interaction it is not possible to solve the challenge. Players are thus forced to understand how to interact with the smart contract to use all the functions available and exploit the DEX.
 ### Connection
+
 ![Connection page](./assets/connection.png)
 Connection info also accessible via the Challenge Handler.
 
 ### Challenge Handler
 ![Challenge Handler](./assets/challenge_handler.png)
-Since this challenge was built on top of the Paradigm 2022 CTF infrastructure, it's available to player the Challenge Handler to Start a new instance of the challenge, Kill it, or Get the flag if condition are satisfied.
+
+Since this challenge was built on top of the [Paradigm 2022 CTF infrastructure](https://github.com/paradigmxyz/paradigm-ctf-infrastructure), it's available to player the Challenge Handler to Start a new instance of the challenge, Kill it, or Get the flag if condition are satisfied.
 
 ### Setup.sol
 This is the setup contract used to deploy challenge contracts and check if solution condition are satisfied.
