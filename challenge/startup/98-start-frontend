@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set e+x
+
+cd /home/ctf/frontend/ && \
+yarn start >/dev/null&

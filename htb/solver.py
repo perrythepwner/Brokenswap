@@ -14,12 +14,12 @@ def csend(contract: str, fn: str, *args):
 
 
 if __name__ == "__main__":
-    challHandler = ("0.0.0.0", 1337)
+    challHandler = ("0.0.0.0", 8001)
     if len(sys.argv) > 2:
         baseUrl = sys.argv[1]
 
     # connect to challenge handler and get connection info
-    p = pwn.remote("0.0.0.0", 1337)
+    p = pwn.remote("0.0.0.0", 8001)
     p.recvuntil(b"action? ")
     p.sendline(b"1")
     p.recvuntil(b"Here's your connection info:\n\n")
@@ -45,9 +45,9 @@ if __name__ == "__main__":
     csend(htb_addr, "approve(address,uint256)", target, str(1 * 10**18))
     csend(target, "swap(address,address,uint256)", htb_addr, weth_addr, str(5 * 10**17)) # 0.5 HTB  
 
-    p = pwn.remote("0.0.0.0", 1337)
+    p = pwn.remote("0.0.0.0", 8001)
     p.recvuntil(b"action? ")
     p.sendline(b"3")
-    flag = p.recvline().decode()
+    flag = p.recvall().decode()
     p.close()
     print(f"\n\n[*] {flag}")
