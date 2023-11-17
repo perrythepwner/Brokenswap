@@ -55,6 +55,7 @@ RUN yarn install
 RUN yarn build
 
 
+### Finalizing ###
 FROM frontend as final
 
 WORKDIR /home/ctf/
