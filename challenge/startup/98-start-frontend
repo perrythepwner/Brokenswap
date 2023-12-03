@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set e+x
+set -ex
 
 cd /home/ctf/frontend/ && \
 yarn start >/dev/null&
