@@ -13,7 +13,7 @@ Category: <font color=orange> Blockchain</font>
 
 - The challenge consist in finding a way to steal funds from a Decentralized Exchange (DEX). The DEX relies con the *Constant Product Formula* to calculate prices of the assets and it's possible to cause an imbalance in the pool (and therefore make profitable trades) calling the `_moveAmountToFeesPool()` - incorrectly marked with the modifier `public` instead of `internal` - to move arbitrary tokens out of the liquidity pool.
 
-## Description
+# Description
 
 ```
 Legend has it that a long time ago an unknown developer from District 13 created this DEX to ensure that only those richest in WETH tokens could participate in the decisions of the élite.
@@ -21,10 +21,11 @@ Entry costs 15 WETH and we don't have any, we only have a few ETH left from the 
 It's been a long time and they can't be found anywhere except in the pool of this DEX that seems unbreakable...
 ```
 
-## Skills Required
+# Skills Required
 
 - Smart contract interaction.
-## Skills Learned
+  
+# Skills Learned
 
 - DEXes fundamentals: Liquidity Pools, Trading Pairs, `x*y = k` formula.
 - DEXes security: Liquidity Pools imbalance, Access Control vulnerabilities.
