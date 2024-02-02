@@ -1,4 +1,4 @@
-![img](./assets/hacktheboo_banner.jpg)
+![img](./assets/CA_banner.jpg)
 
 # Brokenswap
 ![](./assets/brokenswap-logo.png)
