@@ -184,9 +184,9 @@ def new_get_flag_action(
 
         print(FLAG)
         print()
-        print("Did it seem spookily simple to you?")
-        print("Well, that was a simplified version of the 340 ETH (worth approximately $624,000 at the time) LeetSwap Hack that occurred on August 1, 2023.")
-        print("Congratulations, you could have been rich now 🎃")
+        print("GG, Tribute! Not many people have come this far.")
+        print("Was it ez? Well, that was a simplified version of the 340 ETH (worth approximately $624,000 at the time) LeetSwap Hack that occurred on August 1, 2023.")
+        print("Congratulations, you could have been rich now 🏹")
         return 0
 
     return Action(name="get flag", handler=action)

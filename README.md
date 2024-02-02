@@ -16,9 +16,9 @@ Category: <font color=orange> Blockchain</font>
 ## Description
 
 ```
-I launched my new DEX but people are scared to use it due to it not being audited.
-However, I used secure libraries and well-known standards, I'm very sure it's not broken!
-Can you prove otherwise?
+Legend has it that a long time ago an unknown developer from District 13 created this DEX to ensure that only those richest in WETH tokens could participate in the decisions of the élite.
+Entry costs 15 WETH and we don't have any, we only have a few ETH left from the winnings of the previous challenges, but no player so far has managed to get their hands on any WETH.  
+It's been a long time and they can't be found anywhere except in the pool of this DEX that seems unbreakable...
 ```
 
 ## Skills Required
