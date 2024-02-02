@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import json
 import os
 import random
@@ -195,8 +197,9 @@ def run_launcher(actions: List[Action]):
         print(f"{i+1} - {action.name}")
 
     action = input("action? ")
-    if not action.isdigit() or int(action) < 0 or int(action) > len(actions):
+    if not action.isdigit() or int(action) <= 0 or int(action) > len(actions):
         print("can you not")
         exit(1)
 
-    exit(actions[int(action)-1].handler())
+    status_code = actions[int(action)-1].handler()
+    exit(status_code)
