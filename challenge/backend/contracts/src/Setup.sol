@@ -38,6 +38,6 @@ contract Setup {
     }
 
     function isSolved() public view returns (bool) {
-        return (weth.balanceOf(msg.sender) > 15e18);
+        return (weth.balanceOf(msg.sender) >= 15e18);
     }
 }

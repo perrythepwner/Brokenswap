@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set e+x
+set -ex
 
 # fix accessibility of files
 chmod 777 /home/ctf/frontend/src/constants/token-list.json
