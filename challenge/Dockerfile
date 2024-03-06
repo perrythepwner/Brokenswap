@@ -1,10 +1,10 @@
 FROM node:18-bookworm as ctf-base
 
-# install xinetd and python, create ctf user
+# install utils, create ctf user
 RUN true \
     && mkdir /var/log/ctf/ /startup/ \
     && apt update \
-    && apt install -y xinetd tini python3 python3-pip \
+    && apt install -y xinetd tini python3 python3-pip uuid-runtime \
     && rm -rf /var/cache/apt/archives/ \
     && useradd -m ctf \
     && true

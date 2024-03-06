@@ -3,7 +3,7 @@
 PYTHONUNBUFFERED=true gunicorn \
     --user ctf \
     --group ctf \
-    --bind 0.0.0.0:$SRV_PORT \
+    --bind 0.0.0.0:${SRV_PORT:-8000} \
     --daemon \
     --workers 1 \
     --threads 1 \

@@ -15,3 +15,6 @@ app.use((req, res, next) => {
 app.listen(process.env.HTTP_PORT, () => {
   console.log(`Server started on port ${process.env.HTTP_PORT}`)
 })
+//app.listen(3001, () => {
+//  console.log(`Server started on port 3001`)
+//})

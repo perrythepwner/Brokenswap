@@ -19,10 +19,10 @@ from web3.types import TxReceipt
 from eth_sandbox import get_shared_secret
 
 SRV_PORT = os.getenv("SRV_PORT", "8000")
-PUBLIC_IP = os.getenv("PUBLIC_IP", "127.0.0.1")
+PUBLIC_IP = os.getenv("PUBLIC_IP", "0.0.0.0")
 
 TEAM_UUID = os.getenv("TEAM_UUID", "team")
-FLAG = os.getenv("FLAG", "HTB{placeholder}")
+FLAG = os.getenv("FLAG", "HTB{1_w4sn7_7h3_0nly_7h1ng_br0k3}")
 
 Account.enable_unaudited_hdwallet_features()
 
