@@ -1,10 +1,10 @@
-FROM node:18-bookworm as ctf-base
+FROM node:18-bookworm-slim as ctf-base
 
 # install utils, create ctf user
 RUN true \
     && mkdir /var/log/ctf/ /startup/ \
     && apt update \
-    && apt install -y xinetd tini python3 python3-pip uuid-runtime \
+    && apt install -y curl git xinetd tini python3 python3-pip uuid-runtime \
     && rm -rf /var/cache/apt/archives/ \
     && useradd -m ctf \
     && true
@@ -12,7 +12,6 @@ RUN true \
 # copy xinetd config and startup scripts
 COPY ./startup/ /startup/
 COPY entrypoint.sh /entrypoint.sh
-
 
 #################
 #    BACKEND    #
