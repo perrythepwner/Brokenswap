@@ -4,7 +4,7 @@ FROM node:18-bookworm-slim as ctf-base
 RUN true \
     && mkdir /var/log/ctf/ /startup/ \
     && apt update \
-    && apt install -y curl git xinetd tini python3 python3-pip uuid-runtime \
+    && apt install -y curl git xinetd tini lighttpd python3 python3-pip uuid-runtime \
     && rm -rf /var/cache/apt/archives/ \
     && useradd -m ctf \
     && true
@@ -51,7 +51,7 @@ COPY ./frontend/ /home/ctf/frontend/
 WORKDIR /home/ctf/frontend/
 
 RUN yarn install
-RUN yarn build
+RUN export TEAM_UUID=$(uuidgen) && echo $TEAM_UUID > /tmp/TEAM_UUID && export REACT_APP_TEAM_UUID=$TEAM_UUID && yarn build
 
 
 ### Finalizing ###

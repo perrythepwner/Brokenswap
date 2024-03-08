@@ -14,7 +14,7 @@ HANDLER_PORT=8001
 HTTP_PORT=3001
 ################################
 
-docker rm -f $IMAGE && \
+#docker rm -f $IMAGE && \
 docker build --tag=$IMAGE:latest ./challenge/ && \
 docker run -it --rm \
     -p "$HTTP_PORT:$HTTP_PORT" \

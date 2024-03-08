@@ -3,4 +3,6 @@
 set -ex
 
 cd /home/ctf/frontend/ && \
-yarn start >/dev/null&
+cp -r build/* /var/www/html/ && \
+cp -r public/connection-info /var/www/html/ && \
+lighttpd -f /etc/lighttpd/lighttpd.conf
