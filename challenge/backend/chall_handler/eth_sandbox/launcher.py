@@ -112,7 +112,7 @@ def new_launch_instance_action(
         with open(f"/tmp/{TEAM_UUID}", "w") as f:
             f.write(json.dumps(connection_info, indent=4))
 
-        with open('/home/ctf/frontend/src/constants/token-list.json', 'r') as f:
+        with open('/var/www/html/constants/token-list.json', 'r') as f:
             tokenList = json.load(f)
             for token in tokenList['tokens']:
                 if token['symbol'] == 'HTB':
@@ -120,7 +120,7 @@ def new_launch_instance_action(
                 elif token['symbol'] == 'WETH':
                     token['address'] = connection_info['WETH Token Contract']
 
-        with open('/home/ctf/frontend/src/constants/token-list.json', 'w') as f:
+        with open('/var/www/html/constants/token-list.json', 'w') as f:
             json.dump(tokenList, f, indent=4)
 
         print("Your private blockchain has been deployed.")

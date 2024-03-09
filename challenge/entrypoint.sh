@@ -16,8 +16,6 @@ export SRV_PORT=8000
 export HANDLER_PORT=8001
 export HTTP_PORT=3001
 
-# fix accessibility of files
-chmod 777 /home/ctf/frontend/src/constants/token-list.json
 mkdir -p /home/ctf/frontend/public/connection-info/ && \
 ln -s /tmp/$TEAM_UUID /home/ctf/frontend/public/connection-info/$TEAM_UUID
 echo $REACT_APP_TEAM_UUID >> /home/ctf/frontend/.env.production && cp /home/ctf/frontend/.env.production /home/ctf/frontend/.env
@@ -28,4 +26,3 @@ for f in /startup/*; do
 done
 
 tail -f /var/log/ctf/*
-REACT_APP_TEAM_UUID

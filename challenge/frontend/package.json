@@ -70,7 +70,6 @@
   },
   "scripts": {
     "build": "npm run typechain && REACT_APP_TEAM_UUID=$REACT_APP_TEAM_UUID NODE_OPTIONS=--openssl-legacy-provider react-scripts --max_old_space_size=4096 build",
-    "serve": "node server.js",
     "start": "PORT=$HTTP_PORT NODE_OPTIONS=--openssl-legacy-provider react-scripts --max_old_space_size=4096 start",
     "clean": "rm -rf src/generated/ && rm -rf node_modules/",
     "typechain": "typechain --target=ethers-v5 'src/**/abis/*.json' --out-dir src/generated/",

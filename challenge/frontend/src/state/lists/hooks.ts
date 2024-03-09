@@ -1,9 +1,6 @@
 import { Token } from '@ubeswap/sdk'
 import { TokenInfo, TokenList } from '@uniswap/token-lists'
-
-import tokenList from './../../constants/token-list.json'
-
-const TOKEN_LIST: TokenList = tokenList
+import { useEffect, useState } from 'react'
 
 /**
  * Token instances created from token info.
@@ -62,17 +59,34 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
 }
 
 // get all the tokens from active lists, combine with local default tokens
+export function useTokenList() {
+  const [tokenList, setTokenList] = useState<TokenList | null>(null)
+  useEffect(() => {
+    const fetchTokenList = async () => {
+      try {
+        const response = await fetch('/constants/token-list.json')
+        if (!response.ok) {
+          throw new Error('Failed to fetch token list')
+        }
+        const data: TokenList = await response.json()
+        setTokenList(data)
+      } catch (error) {
+        console.error('Error fetching token list:', error)
+      }
+    };
+
+    fetchTokenList();
+  }, []);
+  return tokenList;
+}
+
 export function useCombinedActiveList(): TokenAddressMap {
-  const defaultTokenMap = listToTokenMap(TOKEN_LIST)
+  const tokenList = useTokenList()
+  const defaultTokenMap = tokenList ? listToTokenMap(tokenList) : {}
   return defaultTokenMap
 }
 
 // all tokens from inactive lists
 export function useCombinedInactiveList(): TokenAddressMap {
   return []
-}
-
-// used to hide warnings on import for default tokens
-export function useDefaultTokenList(): TokenAddressMap {
-  return listToTokenMap(TOKEN_LIST)
 }
