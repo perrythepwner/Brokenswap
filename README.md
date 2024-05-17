@@ -1,10 +1,10 @@
-![img](./assets/CA_banner.jpg)
+![img](./assets/EventBanner.jpg)
 
 # Brokenswap
 ![](./assets/brokenswap-logo.png)
 _"people said i was broke so i funded Brokenswap"_
 
-> Date: 26<sup>th</sup> October 2023 \
+> Date: 10<sup>th</sup> May 2024 \
 Challenge Author: <font color=#1E9F9A>perrythepwner</font> \
 Difficulty: <font color=yellow>Easy/Medium</font> \
 Category: <font color=orange> Blockchain</font>
@@ -16,9 +16,9 @@ Category: <font color=orange> Blockchain</font>
 # Description
 
 ```
-Legend has it that a long time ago an unknown developer from District 13 created this DEX to ensure that only those richest in WETH tokens could participate in the decisions of the élite.
-Entry costs 15 WETH and we don't have any, we only have a few ETH left from the winnings of the previous challenges, but no player so far has managed to get their hands on any WETH.  
-It's been a long time and they can't be found anywhere except in the pool of this DEX that seems unbreakable...
+Legend has it that a long time ago, a mysterious tech-wizard from Vault 13 crafted this DEX to ensure that only those flush with WETH tokens could wield power in the wasteland's élite circles.
+Entry costs 15 WETH, and we're fresh out. All we have left are a few ETH salvaged from previous challenges, but no wastelander has ever managed to scavenge any WETH.
+It's been ages, and WETH is nowhere to be found except in the depths of this DEX, which seems unbreakable...
 ```
 
 # Skills Required

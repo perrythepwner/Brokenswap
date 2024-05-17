@@ -1,4 +1,4 @@
-import '@celo/react-celo/lib/styles.css'
+import './styles.css'
 import './index.css'
 
 import React, { StrictMode } from 'react'

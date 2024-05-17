@@ -50,8 +50,8 @@ FROM backend as frontend
 COPY ./frontend/ /home/ctf/frontend/
 WORKDIR /home/ctf/frontend/
 
-RUN yarn install
-RUN export TEAM_UUID=$(uuidgen) && echo $TEAM_UUID > /tmp/TEAM_UUID && export REACT_APP_TEAM_UUID=$TEAM_UUID && yarn build
+#RUN yarn install
+#RUN export TEAM_UUID=$(uuidgen) && echo $TEAM_UUID > /tmp/TEAM_UUID && export REACT_APP_TEAM_UUID=$TEAM_UUID && yarn build
 
 
 ### Finalizing ###
