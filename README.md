@@ -6,7 +6,7 @@ _"people said i was broke so i funded Brokenswap"_
 
 > Date: 10<sup>th</sup> May 2024 \
 Challenge Author: <font color=#1E9F9A>perrythepwner</font> \
-Difficulty: <font color=yellow>Easy/Medium</font> \
+Difficulty: <font color=yellow>Medium</font> \
 Category: <font color=orange> Blockchain</font>
 
 # TL;DR
